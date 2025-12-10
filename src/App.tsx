@@ -17,21 +17,18 @@ import ViewAttendance from "./pages/erp/ViewAttendance";
 import UploadMarks from "./pages/erp/UploadMarks";
 import ViewMarks from "./pages/erp/ViewMarks";
 import StudentFees from "./pages/erp/StudentFees";
-import SuperAdminLogin from "./pages/auth/SuperAdminLogin";
-import AdminLogin from "./pages/auth/AdminLogin";
-import TeacherLogin from "./pages/auth/TeacherLogin";
-import StudentLogin from "./pages/auth/StudentLogin";
-import AdminFees from "./pages/erp/AdminFees"; // New import
-import ApproveODRequests from "./pages/erp/ApproveODRequests"; // New import
-import ManageDepartments from "./pages/erp/ManageDepartments"; // New import
-import ManageCourses from "./pages/erp/ManageCourses"; // New import
-import ViewAllAttendance from "./pages/erp/ViewAllAttendance"; // New import
-import ViewAllMarks from "./pages/erp/ViewAllMarks"; // New import
-import ViewMyClasses from "./pages/erp/ViewMyClasses"; // New import
-import ViewStudentProfiles from "./pages/erp/ViewStudentProfiles"; // New import
-import TeacherChat from "./pages/erp/TeacherChat"; // New import
-import StudentChat from "./pages/erp/StudentChat"; // New import
-import RequestOD from "./pages/erp/RequestOD"; // New import
+import AdminFees from "./pages/erp/AdminFees";
+import ApproveODRequests from "./pages/erp/ApproveODRequests";
+import ManageDepartments from "./pages/erp/ManageDepartments";
+import ManageCourses from "./pages/erp/ManageCourses";
+import ViewAllAttendance from "./pages/erp/ViewAllAttendance";
+import ViewAllMarks from "./pages/erp/ViewAllMarks";
+import ViewMyClasses from "./pages/erp/ViewMyClasses";
+import ViewStudentProfiles from "./pages/erp/ViewStudentProfiles";
+import TeacherChat from "./pages/erp/TeacherChat";
+import StudentChat from "./pages/erp/StudentChat";
+import RequestOD from "./pages/erp/RequestOD";
+import AuthPage from "./components/auth/AuthPage"; // New import for generic AuthPage
 
 const queryClient = new QueryClient();
 
@@ -44,10 +41,10 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           {/* Auth Routes */}
-          <Route path="/auth/super-admin" element={<SuperAdminLogin />} />
-          <Route path="/auth/admin" element={<AdminLogin />} />
-          <Route path="/auth/teacher" element={<TeacherLogin />} />
-          <Route path="/auth/student" element={<StudentLogin />} />
+          <Route path="/auth/super-admin" element={<AuthPage role="SUPER_ADMIN" defaultUsername="superadmin" />} />
+          <Route path="/auth/admin" element={<AuthPage role="ADMIN" defaultUsername="admin" />} />
+          <Route path="/auth/teacher" element={<AuthPage role="TEACHER" defaultUsername="teacher" />} />
+          <Route path="/auth/student" element={<AuthPage role="STUDENT" defaultUsername="student" />} />
 
           {/* Dashboard Routes */}
           <Route path="/dashboard/super-admin" element={<SuperAdminDashboard />} />
@@ -63,32 +60,32 @@ const App = () => (
           {/* ERP Attendance Routes */}
           <Route path="/erp/attendance/mark" element={<MarkAttendance />} />
           <Route path="/erp/attendance/student" element={<ViewAttendance />} />
-          <Route path="/erp/attendance/all" element={<ViewAllAttendance />} /> {/* New route */}
+          <Route path="/erp/attendance/all" element={<ViewAllAttendance />} />
 
           {/* ERP Marks Management Routes */}
           <Route path="/erp/marks/upload" element={<UploadMarks />} />
           <Route path="/erp/marks/student" element={<ViewMarks />} />
-          <Route path="/erp/marks/all" element={<ViewAllMarks />} /> {/* New route */}
+          <Route path="/erp/marks/all" element={<ViewAllMarks />} />
 
           {/* ERP Fees Management Routes */}
           <Route path="/erp/fees/student" element={<StudentFees />} />
-          <Route path="/erp/fees/admin" element={<AdminFees />} /> {/* New route */}
+          <Route path="/erp/fees/admin" element={<AdminFees />} />
 
           {/* ERP Department & Course Management Routes (Super Admin) */}
-          <Route path="/erp/manage-departments" element={<ManageDepartments />} /> {/* New route */}
-          <Route path="/erp/manage-courses" element={<ManageCourses />} /> {/* New route */}
+          <Route path="/erp/manage-departments" element={<ManageDepartments />} />
+          <Route path="/erp/manage-courses" element={<ManageCourses />} />
 
           {/* ERP OD Request Routes */}
-          <Route path="/erp/od/approve" element={<ApproveODRequests />} /> {/* New route */}
-          <Route path="/erp/od/request" element={<RequestOD />} /> {/* New route */}
+          <Route path="/erp/od/approve" element={<ApproveODRequests />} />
+          <Route path="/erp/od/request" element={<RequestOD />} />
 
           {/* ERP Teacher Specific Routes */}
-          <Route path="/erp/teacher/classes" element={<ViewMyClasses />} /> {/* New route */}
-          <Route path="/erp/teacher/student-profiles" element={<ViewStudentProfiles />} /> {/* New route */}
-          <Route path="/erp/chat/teacher" element={<TeacherChat />} /> {/* New route */}
+          <Route path="/erp/teacher/classes" element={<ViewMyClasses />} />
+          <Route path="/erp/teacher/student-profiles" element={<ViewStudentProfiles />} />
+          <Route path="/erp/chat/teacher" element={<TeacherChat />} />
 
           {/* ERP Student Specific Routes */}
-          <Route path="/erp/chat/student" element={<StudentChat />} /> {/* New route */}
+          <Route path="/erp/chat/student" element={<StudentChat />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

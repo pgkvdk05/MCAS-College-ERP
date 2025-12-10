@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -9,7 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-const SuperAdminLogin: React.FC = () => {
+interface AuthPageProps {
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT';
+  defaultUsername: string;
+}
+
+const AuthPage: React.FC<AuthPageProps> = ({ role, defaultUsername }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -17,11 +22,11 @@ const SuperAdminLogin: React.FC = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Simulate login logic
-    if (username === 'superadmin' && password === 'password') { // Simple placeholder credentials
-      toast.success('Super Admin Login Successful!', { description: 'Redirecting to dashboard...' });
-      navigate('/dashboard/super-admin');
+    if (username === defaultUsername && password === 'password') { // Simple placeholder credentials
+      toast.success(`${role.replace('_', ' ')} Login Successful!`, { description: 'Redirecting to dashboard...' });
+      navigate(`/dashboard/${role.toLowerCase().replace('_', '-')}`);
     } else {
-      toast.error('Invalid Credentials', { description: 'Please try again with username: superadmin, password: password' });
+      toast.error('Invalid Credentials', { description: `Please try again with username: ${defaultUsername}, password: password` });
     }
   };
 
@@ -30,8 +35,8 @@ const SuperAdminLogin: React.FC = () => {
       <div className="min-h-[calc(100vh-160px)] flex items-center justify-center">
         <Card className="w-[380px]">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-primary">Super Admin Login</CardTitle>
-            <CardDescription>Enter your Super Admin credentials</CardDescription>
+            <CardTitle className="text-2xl font-bold text-primary">{role.replace('_', ' ')} Login</CardTitle>
+            <CardDescription>Enter your {role.replace('_', ' ')} credentials</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
             <form onSubmit={handleLogin} className="space-y-4">
@@ -40,7 +45,7 @@ const SuperAdminLogin: React.FC = () => {
                 <Input
                   id="username"
                   type="text"
-                  placeholder="superadmin"
+                  placeholder={defaultUsername}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
@@ -57,7 +62,7 @@ const SuperAdminLogin: React.FC = () => {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">Login as Super Admin</Button>
+              <Button type="submit" className="w-full">Login as {role.replace('_', ' ')}</Button>
             </form>
             <Button variant="outline" className="w-full mt-4" onClick={() => navigate('/')}>
               Go Back to Role Selection
@@ -69,4 +74,4 @@ const SuperAdminLogin: React.FC = () => {
   );
 };
 
-export default SuperAdminLogin;
+export default AuthPage;
