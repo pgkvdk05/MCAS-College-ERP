@@ -9,6 +9,9 @@ import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
+import AddTeacher from "./pages/erp/AddTeacher";
+import AddStudent from "./pages/erp/AddStudent";
+import ManageUsers from "./pages/erp/ManageUsers";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +27,10 @@ const App = () => (
           <Route path="/dashboard/admin" element={<AdminDashboard />} />
           <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
           <Route path="/dashboard/student" element={<StudentDashboard />} />
+          {/* ERP User Management Routes */}
+          <Route path="/erp/add-teacher" element={<AddTeacher />} />
+          <Route path="/erp/add-student" element={<AddStudent />} />
+          <Route path="/erp/manage-users" element={<ManageUsers />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
