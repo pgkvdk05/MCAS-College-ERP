@@ -21,7 +21,7 @@ const simulatedStudentsForMarks = [
 const UploadMarks: React.FC = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
-  const [selectedSection, setSelectedSection] = useState('');
+  // const [selectedSection, setSelectedSection] = useState(''); // Removed section
   const [selectedSubject, setSelectedSubject] = useState('');
   const [marksData, setMarksData] = useState(simulatedStudentsForMarks);
 
@@ -35,8 +35,8 @@ const UploadMarks: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDepartment || !selectedYear || !selectedSection || !selectedSubject) {
-      toast.error('Please select department, year, section, and subject.');
+    if (!selectedDepartment || !selectedYear || !selectedSubject) { // Removed selectedSection
+      toast.error('Please select department, year, and subject.');
       return;
     }
 
@@ -51,12 +51,12 @@ const UploadMarks: React.FC = () => {
     console.log('Marks Upload Data:', {
       department: selectedDepartment,
       year: selectedYear,
-      section: selectedSection,
+      // section: selectedSection, // Removed section
       subject: selectedSubject,
       marks: marksToUpload,
     });
     toast.success('Marks uploaded successfully!', {
-      description: `Class: ${selectedDepartment}-${selectedYear}-${selectedSection}, Subject: ${selectedSubject}`,
+      description: `Class: ${selectedDepartment}-${selectedYear}, Subject: ${selectedSubject}`, // Updated description
     });
     // In a real application, send this data to your backend API
   };
@@ -72,7 +72,7 @@ const UploadMarks: React.FC = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Adjusted grid layout */}
                 <div>
                   <Label htmlFor="department">Department</Label>
                   <Select onValueChange={setSelectedDepartment} value={selectedDepartment} required>
@@ -101,20 +101,8 @@ const UploadMarks: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label htmlFor="section">Section</Label>
-                  <Select onValueChange={setSelectedSection} value={selectedSection} required>
-                    <SelectTrigger id="section">
-                      <SelectValue placeholder="Select Section" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="A">A</SelectItem>
-                      <SelectItem value="B">B</SelectItem>
-                      <SelectItem value="C">C</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
+                {/* Removed Section Select */}
+                <div className="md:col-span-2"> {/* Adjusted span for subject */}
                   <Label htmlFor="subject">Subject</Label>
                   <Select onValueChange={setSelectedSubject} value={selectedSubject} required>
                     <SelectTrigger id="subject">
@@ -131,9 +119,9 @@ const UploadMarks: React.FC = () => {
                 </div>
               </div>
 
-              {selectedDepartment && selectedYear && selectedSection && selectedSubject && (
+              {selectedDepartment && selectedYear && selectedSubject && ( // Removed selectedSection
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-3">Enter Marks for {selectedSubject} ({selectedDepartment}-{selectedYear}-{selectedSection})</h3>
+                  <h3 className="text-lg font-semibold mb-3">Enter Marks for {selectedSubject} ({selectedDepartment}-{selectedYear})</h3> {/* Updated title */}
                   <div className="overflow-x-auto border rounded-md">
                     <Table>
                       <TableHeader>

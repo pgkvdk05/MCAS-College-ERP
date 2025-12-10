@@ -28,7 +28,7 @@ const MarkAttendance: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
-  const [selectedSection, setSelectedSection] = useState('');
+  // const [selectedSection, setSelectedSection] = useState(''); // Removed section
   const [attendance, setAttendance] = useState<{ [key: string]: boolean }>({});
   const [absenceReasons, setAbsenceReasons] = useState<{ [key: string]: string }>({}); // New state for reasons
 
@@ -50,8 +50,8 @@ const MarkAttendance: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDate || !selectedDepartment || !selectedYear || !selectedSection) {
-      toast.error('Please select date, department, year, and section.');
+    if (!selectedDate || !selectedDepartment || !selectedYear) { // Removed selectedSection
+      toast.error('Please select date, department, and year.');
       return;
     }
 
@@ -67,11 +67,11 @@ const MarkAttendance: React.FC = () => {
       date: selectedDate.toISOString().split('T')[0],
       department: selectedDepartment,
       year: selectedYear,
-      section: selectedSection,
+      // section: selectedSection, // Removed section
       records: attendanceRecords,
     });
     toast.success('Attendance marked successfully!', {
-      description: `Date: ${format(selectedDate, 'PPP')}, Class: ${selectedDepartment}-${selectedYear}-${selectedSection}`,
+      description: `Date: ${format(selectedDate, 'PPP')}, Class: ${selectedDepartment}-${selectedYear}`, // Updated description
     });
     // In a real application, send this data to your backend API
   };
@@ -141,24 +141,12 @@ const MarkAttendance: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label htmlFor="section">Section</Label>
-                  <Select onValueChange={setSelectedSection} value={selectedSection} required>
-                    <SelectTrigger id="section">
-                      <SelectValue placeholder="Select Section" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="A">A</SelectItem>
-                      <SelectItem value="B">B</SelectItem>
-                      <SelectItem value="C">C</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {/* Removed Section Select */}
               </div>
 
-              {selectedDepartment && selectedYear && selectedSection && (
+              {selectedDepartment && selectedYear && ( // Removed selectedSection
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-3">Students in {selectedDepartment}-{selectedYear}-{selectedSection}</h3>
+                  <h3 className="text-lg font-semibold mb-3">Students in {selectedDepartment}-{selectedYear}</h3> {/* Updated title */}
                   <div className="overflow-x-auto border rounded-md">
                     <Table>
                       <TableHeader>

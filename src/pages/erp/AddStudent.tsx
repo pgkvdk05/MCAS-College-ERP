@@ -14,7 +14,7 @@ const AddStudent: React.FC = () => {
     rollNumber: '',
     department: '',
     year: '',
-    section: '',
+    // section: '', // Removed section
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -76,10 +76,7 @@ const AddStudent: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="section">Section</Label>
-                <Input id="section" type="text" value={formData.section} onChange={handleChange} required />
-              </div>
+              {/* Removed Section Input */}
               <Button type="submit" className="w-full">Add Student</Button>
             </form>
           </CardContent>

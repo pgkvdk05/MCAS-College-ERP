@@ -20,13 +20,13 @@ const simulatedStudentProfiles = [
 const ViewStudentProfiles: React.FC = () => {
   const [filterDepartment, setFilterDepartment] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
-  const [filterSection, setFilterSection] = useState('all');
+  // const [filterSection, setFilterSection] = useState('all'); // Removed section
 
   const filteredStudents = simulatedStudentProfiles.filter(student => {
     return (
       (filterDepartment === 'all' || student.department === filterDepartment) &&
-      (filterYear === 'all' || student.year === filterYear) &&
-      (filterSection === 'all' || student.section === filterSection)
+      (filterYear === 'all' || student.year === filterYear)
+      // && (filterSection === 'all' || student.section === filterSection) // Removed section filter
     );
   });
 
@@ -42,10 +42,10 @@ const ViewStudentProfiles: React.FC = () => {
         <Card className="max-w-6xl mx-auto">
           <CardHeader>
             <CardTitle>Student Directory</CardTitle>
-            <CardDescription>Browse student profiles by class and section.</CardDescription>
+            <CardDescription>Browse student profiles by class.</CardDescription> {/* Updated description */}
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"> {/* Adjusted grid layout */}
               <div>
                 <Label htmlFor="filterDepartment">Department</Label>
                 <Select onValueChange={setFilterDepartment} value={filterDepartment}>
@@ -76,20 +76,7 @@ const ViewStudentProfiles: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="filterSection">Section</Label>
-                <Select onValueChange={setFilterSection} value={filterSection}>
-                  <SelectTrigger id="filterSection">
-                    <SelectValue placeholder="All Sections" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Sections</SelectItem>
-                    <SelectItem value="A">A</SelectItem>
-                    <SelectItem value="B">B</SelectItem>
-                    <SelectItem value="C">C</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Removed Section Select */}
             </div>
 
             <div className="overflow-x-auto border rounded-md">
@@ -98,7 +85,7 @@ const ViewStudentProfiles: React.FC = () => {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Roll Number</TableHead>
-                    <TableHead>Class</TableHead>
+                    <TableHead>Class</TableHead> {/* This will now show Department and Year */}
                     <TableHead>Email</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -109,7 +96,7 @@ const ViewStudentProfiles: React.FC = () => {
                       <TableRow key={student.id}>
                         <TableCell className="font-medium">{student.name}</TableCell>
                         <TableCell>{student.rollNumber}</TableCell>
-                        <TableCell>{student.department.split('_')[0]} {student.year} - {student.section}</TableCell>
+                        <TableCell>{student.department.split('_')[0]} {student.year}</TableCell> {/* Updated class display */}
                         <TableCell>{student.email}</TableCell>
                         <TableCell className="text-right">
                           <Button size="sm" variant="outline" onClick={() => handleViewDetails(student.name)}>
