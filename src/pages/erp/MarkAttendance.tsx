@@ -123,7 +123,6 @@ const MarkAttendance: React.FC = () => {
                       <SelectItem value="1">1st Year</SelectItem>
                       <SelectItem value="2">2nd Year</SelectItem>
                       <SelectItem value="3">3rd Year</SelectItem>
-                      <SelectItem value="4">4th Year</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
