@@ -98,7 +98,7 @@ const ManageCourses: React.FC = () => {
                 <Select onValueChange={setNewCourseDepartment} value={newCourseDepartment} required>
                   <SelectTrigger id="newCourseDepartment">
                     <SelectValue placeholder="Select Department" />
-                  SelectTrigger>
+                  </SelectTrigger>
                   <SelectContent>
                     {departments.map((dept) => (
                       <SelectItem key={dept} value={dept}>{dept}</SelectItem>
