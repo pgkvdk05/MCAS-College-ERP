@@ -16,7 +16,11 @@ import MarkAttendance from "./pages/erp/MarkAttendance";
 import ViewAttendance from "./pages/erp/ViewAttendance";
 import UploadMarks from "./pages/erp/UploadMarks";
 import ViewMarks from "./pages/erp/ViewMarks";
-import StudentFees from "./pages/erp/StudentFees"; // Import the new component
+import StudentFees from "./pages/erp/StudentFees";
+import SuperAdminLogin from "./pages/auth/SuperAdminLogin"; // New import
+import AdminLogin from "./pages/auth/AdminLogin";           // New import
+import TeacherLogin from "./pages/auth/TeacherLogin";         // New import
+import StudentLogin from "./pages/auth/StudentLogin";         // New import
 
 const queryClient = new QueryClient();
 
@@ -28,6 +32,12 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          {/* New Auth Routes */}
+          <Route path="/auth/super-admin" element={<SuperAdminLogin />} />
+          <Route path="/auth/admin" element={<AdminLogin />} />
+          <Route path="/auth/teacher" element={<TeacherLogin />} />
+          <Route path="/auth/student" element={<StudentLogin />} />
+
           <Route path="/dashboard/super-admin" element={<SuperAdminDashboard />} />
           <Route path="/dashboard/admin" element={<AdminDashboard />} />
           <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
@@ -43,7 +53,7 @@ const App = () => (
           <Route path="/erp/marks/upload" element={<UploadMarks />} />
           <Route path="/erp/marks/student" element={<ViewMarks />} />
           {/* ERP Fees Management Routes */}
-          <Route path="/erp/fees/student" element={<StudentFees />} /> {/* New route for Student Fees */}
+          <Route path="/erp/fees/student" element={<StudentFees />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
