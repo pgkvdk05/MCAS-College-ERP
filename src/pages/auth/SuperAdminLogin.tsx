@@ -59,9 +59,9 @@ const SuperAdminLogin: React.FC = () => {
               </div>
               <Button type="submit" className="w-full">Login as Super Admin</Button>
             </form>
-            <p className="text-sm text-muted-foreground text-center mt-4">
-              Don't have an account? <Link to="/" className="text-blue-500 hover:underline">Go back</Link>
-            </p>
+            <Button variant="outline" className="w-full mt-4" onClick={() => navigate('/')}>
+              Go Back to Role Selection
+            </Button>
           </CardContent>
         </Card>
       </div>
