@@ -19,11 +19,11 @@ const simulatedStudentAttendance = [
 ];
 
 const ViewAttendance: React.FC = () => {
-  const [filterSubject, setFilterSubject] = useState('');
+  const [filterSubject, setFilterSubject] = useState('all'); // Initialize with 'all'
 
-  const filteredAttendance = filterSubject
-    ? simulatedStudentAttendance.filter(record => record.subject === filterSubject)
-    : simulatedStudentAttendance;
+  const filteredAttendance = filterSubject === 'all'
+    ? simulatedStudentAttendance
+    : simulatedStudentAttendance.filter(record => record.subject === filterSubject);
 
   return (
     <MainLayout userRole="STUDENT"> {/* Assuming Student would access this */}
@@ -42,7 +42,7 @@ const ViewAttendance: React.FC = () => {
                   <SelectValue placeholder="All Subjects" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Subjects</SelectItem>
+                  <SelectItem value="all">All Subjects</SelectItem> {/* Changed value to "all" */}
                   <SelectItem value="Mathematics">Mathematics</SelectItem>
                   <SelectItem value="Physics">Physics</SelectItem>
                   <SelectItem value="Chemistry">Chemistry</SelectItem>

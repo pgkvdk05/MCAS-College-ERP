@@ -18,11 +18,11 @@ const simulatedStudentMarks = [
 ];
 
 const ViewMarks: React.FC = () => {
-  const [filterSubject, setFilterSubject] = useState('');
+  const [filterSubject, setFilterSubject] = useState('all'); // Initialize with 'all'
 
-  const filteredMarks = filterSubject
-    ? simulatedStudentMarks.filter(record => record.subject === filterSubject)
-    : simulatedStudentMarks;
+  const filteredMarks = filterSubject === 'all'
+    ? simulatedStudentMarks
+    : simulatedStudentMarks.filter(record => record.subject === filterSubject);
 
   const getGradeVariant = (grade: string) => {
     if (grade === 'A+' || grade === 'A') return 'default';
@@ -48,7 +48,7 @@ const ViewMarks: React.FC = () => {
                   <SelectValue placeholder="All Subjects" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Subjects</SelectItem>
+                  <SelectItem value="all">All Subjects</SelectItem> {/* Changed value to "all" */}
                   <SelectItem value="Mathematics">Mathematics</SelectItem>
                   <SelectItem value="Physics">Physics</SelectItem>
                   <SelectItem value="Chemistry">Chemistry</SelectItem>
