@@ -95,13 +95,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-/* Custom button variants for sidebar */
-@layer components {
-  .btn-sidebar-primary {
-    @apply bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90;
-  }
-  .btn-sidebar-ghost {
-    @apply hover:bg-sidebar-accent hover:text-sidebar-accent-foreground;
-  }
-}

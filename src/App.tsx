@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -25,14 +24,14 @@ import TeacherChat from "./pages/erp/TeacherChat";
 import StudentChat from "./pages/erp/StudentChat";
 import RequestOD from "./pages/erp/RequestOD";
 import AuthPage from "./components/auth/AuthPage";
-import DashboardPage from "./components/layout/DashboardPage"; // New import for generic DashboardPage
+import DashboardPage from "./components/layout/DashboardPage";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
+      {/* Removed <Toaster /> as we are using Sonner */}
       <Sonner />
       <BrowserRouter>
         <Routes>
