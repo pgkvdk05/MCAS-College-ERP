@@ -16,6 +16,7 @@ import MarkAttendance from "./pages/erp/MarkAttendance";
 import ViewAttendance from "./pages/erp/ViewAttendance";
 import UploadMarks from "./pages/erp/UploadMarks";
 import ViewMarks from "./pages/erp/ViewMarks";
+import StudentFees from "./pages/erp/StudentFees"; // Import the new component
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,8 @@ const App = () => (
           {/* ERP Marks Management Routes */}
           <Route path="/erp/marks/upload" element={<UploadMarks />} />
           <Route path="/erp/marks/student" element={<ViewMarks />} />
+          {/* ERP Fees Management Routes */}
+          <Route path="/erp/fees/student" element={<StudentFees />} /> {/* New route for Student Fees */}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
