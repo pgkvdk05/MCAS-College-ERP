@@ -30,7 +30,7 @@ const StudentDashboard: React.FC = () => {
                 <Link to="/erp/chat/student">Class Chat</Link>
               </Button>
               <Button asChild variant="outline">
-                <Link to="/erp/od/student">Request OD</Link>
+                <Link to="/erp/od/request">Request OD</Link>
               </Button>
             </div>
           </CardContent>

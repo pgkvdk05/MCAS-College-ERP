@@ -32,6 +32,25 @@ const AdminDashboard: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Overview & Approvals</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+              <Button asChild>
+                <Link to="/erp/attendance/all">View All Attendance</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/erp/marks/all">View All Marks</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/erp/od/approve">Approve OD Requests</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
         {/* Add more cards/sections as needed */}
       </div>
     </MainLayout>

@@ -30,6 +30,28 @@ const SuperAdminDashboard: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Academic & Financial Management</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+              <Button asChild>
+                <Link to="/erp/manage-departments">Manage Departments</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/erp/manage-courses">Manage Courses</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/erp/fees/admin">Manage All Fees</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/erp/od/approve">Approve All OD Requests</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
         {/* Add more cards/sections as needed */}
       </div>
     </MainLayout>
