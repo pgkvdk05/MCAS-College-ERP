@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MadeWithDyad } from '@/components/made-with-dyad';
 import Sidebar from './Sidebar'; // Import the new Sidebar component
 
 interface MainLayoutProps {
@@ -37,7 +36,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, userRole = null }) =>
 
       <footer className="text-center text-sm text-muted-foreground p-4 border-t border-border">
         &copy; 2025 Mangalam College of Arts and Science ERP
-        <MadeWithDyad />
+        <div className="p-4 text-center">
+          <a
+            href="https://www.dyad.sh/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            Made with Dyad
+          </a>
+        </div>
       </footer>
     </div>
   );
