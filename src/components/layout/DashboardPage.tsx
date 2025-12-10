@@ -1,0 +1,193 @@
+"use client";
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import MainLayout from '@/components/layout/MainLayout';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Users, BookUser, GraduationCap, Building2, BookOpen, DollarSign, CalendarCheck,
+  ClipboardList, FileText, MessageSquareText, LayoutDashboard
+} from 'lucide-react';
+
+interface DashboardPageProps {
+  userRole: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT';
+}
+
+// Define dashboard content for each role
+const dashboardConfig = {
+  SUPER_ADMIN: {
+    title: 'Super Admin Dashboard',
+    sections: [
+      {
+        title: 'Quick Stats',
+        description: '',
+        type: 'stats',
+        items: [
+          { title: 'Total Users', value: '2,350', trend: '+180 this month', icon: Users },
+          { title: 'Active Departments', value: '5', trend: 'All active', icon: Building2 },
+          { title: 'Total Courses', value: '45', trend: '+5 new this semester', icon: BookOpen },
+          { title: 'Pending OD Requests', value: '7', trend: 'Requires immediate action', icon: CalendarCheck },
+        ],
+      },
+      {
+        title: 'User Management',
+        description: 'Manage all user accounts and roles within the ERP system.',
+        type: 'links',
+        items: [
+          { name: 'Add New Teacher', href: '/erp/add-teacher', icon: BookUser },
+          { name: 'Add New Student', href: '/erp/add-student', icon: GraduationCap },
+          { name: 'View & Manage All Users', href: '/erp/manage-users', icon: Users, variant: 'outline' },
+        ],
+      },
+      {
+        title: 'Academic & Financial Configuration',
+        description: 'Configure departments, courses, and manage financial records.',
+        type: 'links',
+        items: [
+          { name: 'Manage Departments', href: '/erp/manage-departments', icon: Building2 },
+          { name: 'Manage Courses', href: '/erp/manage-courses', icon: BookOpen },
+          { name: 'Manage All Fees', href: '/erp/fees/admin', icon: DollarSign, variant: 'outline' },
+          { name: 'Approve OD Requests', href: '/erp/od/approve', icon: CalendarCheck, variant: 'outline' },
+        ],
+      },
+    ],
+  },
+  ADMIN: {
+    title: 'Admin Dashboard',
+    sections: [
+      {
+        title: 'Administrative Tasks',
+        description: '',
+        type: 'links',
+        items: [
+          { name: 'Add Teacher', href: '/erp/add-teacher' },
+          { name: 'Add Student', href: '/erp/add-student' },
+          { name: 'Mark Attendance (Admin override)', href: '/erp/attendance/mark', variant: 'outline' },
+          { name: 'Update Fee Status', href: '/erp/fees/admin', variant: 'outline' },
+        ],
+      },
+      {
+        title: 'Overview & Approvals',
+        description: '',
+        type: 'links',
+        items: [
+          { name: 'View All Attendance', href: '/erp/attendance/all' },
+          { name: 'View All Marks', href: '/erp/marks/all' },
+          { name: 'Approve OD Requests', href: '/erp/od/approve', variant: 'outline' },
+        ],
+      },
+    ],
+  },
+  TEACHER: {
+    title: 'Teacher Dashboard',
+    sections: [
+      {
+        title: 'Academic Management',
+        description: '',
+        type: 'links',
+        items: [
+          { name: 'Mark Attendance', href: '/erp/attendance/mark' },
+          { name: 'Upload Marks', href: '/erp/marks/upload' },
+          { name: 'Class Chat', href: '/erp/chat/teacher', variant: 'outline' },
+          { name: 'Approve OD Requests', href: '/erp/od/approve', variant: 'outline' },
+        ],
+      },
+      {
+        title: 'Class & Student Information',
+        description: '',
+        type: 'links',
+        items: [
+          { name: 'View My Classes', href: '/erp/teacher/classes' },
+          { name: 'View Student Profiles', href: '/erp/teacher/student-profiles', variant: 'outline' },
+        ],
+      },
+    ],
+  },
+  STUDENT: {
+    title: 'Student Dashboard',
+    sections: [
+      {
+        title: 'Student Services',
+        description: '',
+        type: 'links',
+        items: [
+          { name: 'View Attendance', href: '/erp/attendance/student' },
+          { name: 'View Marks', href: '/erp/marks/student' },
+          { name: 'View Fee Status', href: '/erp/fees/student', variant: 'outline' },
+          { name: 'Class Chat', href: '/erp/chat/student', variant: 'outline' },
+          { name: 'Request OD', href: '/erp/od/request', variant: 'outline' },
+        ],
+      },
+    ],
+  },
+};
+
+const DashboardPage: React.FC<DashboardPageProps> = ({ userRole }) => {
+  const config = dashboardConfig[userRole];
+
+  if (!config) {
+    return (
+      <MainLayout userRole={userRole}>
+        <div className="text-center text-destructive">
+          Dashboard configuration not found for role: {userRole}
+        </div>
+      </MainLayout>
+    );
+  }
+
+  return (
+    <MainLayout userRole={userRole}>
+      <div className="space-y-8">
+        <h2 className="text-4xl font-bold text-primary mb-6">{config.title}</h2>
+
+        {config.sections.map((section, index) => (
+          <Card key={index}>
+            <CardHeader>
+              <CardTitle>{section.title}</CardTitle>
+              {section.description && <CardDescription>{section.description}</CardDescription>}
+            </CardHeader>
+            <CardContent>
+              {section.type === 'stats' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {section.items.map((item, itemIndex) => {
+                    const Icon = item.icon;
+                    return (
+                      <Card key={itemIndex}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
+                          {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">{item.value}</div>
+                          <p className="text-xs text-muted-foreground">{item.trend}</p>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+              {section.type === 'links' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {section.items.map((item, itemIndex) => {
+                    const Icon = item.icon;
+                    return (
+                      <Button key={itemIndex} asChild variant={item.variant || 'default'}>
+                        <Link to={item.href} className="flex items-center justify-center space-x-2">
+                          {Icon && <Icon className="h-4 w-4" />}
+                          <span>{item.name}</span>
+                        </Link>
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </MainLayout>
+  );
+};
+
+export default DashboardPage;

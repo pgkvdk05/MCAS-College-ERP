@@ -5,10 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import SuperAdminDashboard from "./pages/SuperAdminDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
-import TeacherDashboard from "./pages/TeacherDashboard";
-import StudentDashboard from "./pages/StudentDashboard";
 import AddTeacher from "./pages/erp/AddTeacher";
 import AddStudent from "./pages/erp/AddStudent";
 import ManageUsers from "./pages/erp/ManageUsers";
@@ -28,7 +24,8 @@ import ViewStudentProfiles from "./pages/erp/ViewStudentProfiles";
 import TeacherChat from "./pages/erp/TeacherChat";
 import StudentChat from "./pages/erp/StudentChat";
 import RequestOD from "./pages/erp/RequestOD";
-import AuthPage from "./components/auth/AuthPage"; // New import for generic AuthPage
+import AuthPage from "./components/auth/AuthPage";
+import DashboardPage from "./components/layout/DashboardPage"; // New import for generic DashboardPage
 
 const queryClient = new QueryClient();
 
@@ -47,10 +44,10 @@ const App = () => (
           <Route path="/auth/student" element={<AuthPage role="STUDENT" defaultUsername="student" />} />
 
           {/* Dashboard Routes */}
-          <Route path="/dashboard/super-admin" element={<SuperAdminDashboard />} />
-          <Route path="/dashboard/admin" element={<AdminDashboard />} />
-          <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
-          <Route path="/dashboard/student" element={<StudentDashboard />} />
+          <Route path="/dashboard/super-admin" element={<DashboardPage userRole="SUPER_ADMIN" />} />
+          <Route path="/dashboard/admin" element={<DashboardPage userRole="ADMIN" />} />
+          <Route path="/dashboard/teacher" element={<DashboardPage userRole="TEACHER" />} />
+          <Route path="/dashboard/student" element={<DashboardPage userRole="STUDENT" />} />
 
           {/* ERP User Management Routes */}
           <Route path="/erp/add-teacher" element={<AddTeacher />} />
