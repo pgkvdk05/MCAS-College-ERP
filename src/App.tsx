@@ -12,6 +12,8 @@ import StudentDashboard from "./pages/StudentDashboard";
 import AddTeacher from "./pages/erp/AddTeacher";
 import AddStudent from "./pages/erp/AddStudent";
 import ManageUsers from "./pages/erp/ManageUsers";
+import MarkAttendance from "./pages/erp/MarkAttendance";
+import ViewAttendance from "./pages/erp/ViewAttendance";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,9 @@ const App = () => (
           <Route path="/erp/add-teacher" element={<AddTeacher />} />
           <Route path="/erp/add-student" element={<AddStudent />} />
           <Route path="/erp/manage-users" element={<ManageUsers />} />
+          {/* ERP Attendance Routes */}
+          <Route path="/erp/attendance/mark" element={<MarkAttendance />} />
+          <Route path="/erp/attendance/student" element={<ViewAttendance />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
