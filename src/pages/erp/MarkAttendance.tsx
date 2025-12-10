@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input'; // Import Input for reason field
 import { toast } from 'sonner';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -29,9 +30,22 @@ const MarkAttendance: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedSection, setSelectedSection] = useState('');
   const [attendance, setAttendance] = useState<{ [key: string]: boolean }>({});
+  const [absenceReasons, setAbsenceReasons] = useState<{ [key: string]: string }>({}); // New state for reasons
 
   const handleAttendanceChange = (studentId: string, isChecked: boolean) => {
     setAttendance((prev) => ({ ...prev, [studentId]: isChecked }));
+    // Clear reason if student is marked present
+    if (isChecked) {
+      setAbsenceReasons((prev) => {
+        const newState = { ...prev };
+        delete newState[studentId];
+        return newState;
+      });
+    }
+  };
+
+  const handleReasonChange = (studentId: string, reason: string) => {
+    setAbsenceReasons((prev) => ({ ...prev, [studentId]: reason }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -46,6 +60,7 @@ const MarkAttendance: React.FC = () => {
       rollNumber: student.rollNumber,
       name: student.name,
       status: attendance[student.id] ? 'Present' : 'Absent',
+      reason: attendance[student.id] ? undefined : absenceReasons[student.id] || undefined, // Include reason if absent
     }));
 
     console.log('Attendance Data:', {
@@ -151,6 +166,7 @@ const MarkAttendance: React.FC = () => {
                           <TableHead>Roll Number</TableHead>
                           <TableHead>Name</TableHead>
                           <TableHead className="text-center">Present</TableHead>
+                          <TableHead>Reason (if absent)</TableHead> {/* New column header */}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -163,6 +179,17 @@ const MarkAttendance: React.FC = () => {
                                 checked={attendance[student.id] || false}
                                 onCheckedChange={(checked) => handleAttendanceChange(student.id, !!checked)}
                               />
+                            </TableCell>
+                            <TableCell>
+                              {!attendance[student.id] && ( // Only show if student is marked absent
+                                <Input
+                                  type="text"
+                                  placeholder="Reason for absence (optional)"
+                                  value={absenceReasons[student.id] || ''}
+                                  onChange={(e) => handleReasonChange(student.id, e.target.value)}
+                                  className="w-full"
+                                />
+                              )}
                             </TableCell>
                           </TableRow>
                         ))}
