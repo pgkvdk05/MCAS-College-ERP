@@ -64,10 +64,11 @@ const AddTeacher: React.FC = () => {
                     <SelectValue placeholder="Select Department" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="CSE">Computer Science Engineering</SelectItem>
-                    <SelectItem value="ECE">Electronics & Communication Engineering</SelectItem>
-                    <SelectItem value="MECH">Mechanical Engineering</SelectItem>
-                    <SelectItem value="CIVIL">Civil Engineering</SelectItem>
+                    <SelectItem value="Commerce_BCom">Commerce (B.Com)</SelectItem>
+                    <SelectItem value="Commerce_BComCA">Commerce (B.Com CA)</SelectItem>
+                    <SelectItem value="CS_BScCS">Computer Science (B.Sc CS)</SelectItem>
+                    <SelectItem value="CS_BCA">Computer Science (BCA)</SelectItem>
+                    <SelectItem value="English_BA">English (B.A English)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

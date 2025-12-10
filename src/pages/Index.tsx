@@ -16,7 +16,7 @@ const Index: React.FC = () => {
       <div className="min-h-[calc(100vh-160px)] flex items-center justify-center">
         <Card className="w-[380px]">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-primary">ABC College ERP</CardTitle>
+            <CardTitle className="text-2xl font-bold text-primary">Mangalam College of Arts and Science ERP</CardTitle>
             <CardDescription>Login to your account (Frontend Placeholder)</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
