@@ -33,9 +33,6 @@ const Index: React.FC = () => {
                 <Link to="/auth/student">Student Login</Link>
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground text-center mt-4">
-              This is a frontend simulation. Actual login would involve backend authentication.
-            </p>
           </CardContent>
         </Card>
       </div>
