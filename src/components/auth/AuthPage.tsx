@@ -21,8 +21,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ role, defaultUsername }) => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login logic
-    if (username === defaultUsername && password === 'password') { // Simple placeholder credentials
+    if (username === defaultUsername && password === 'password') {
       toast.success(`${role.replace('_', ' ')} Login Successful!`, { description: 'Redirecting to dashboard...' });
       navigate(`/dashboard/${role.toLowerCase().replace('_', '-')}`);
     } else {

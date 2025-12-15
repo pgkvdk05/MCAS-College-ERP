@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
-// Simulated student profiles
 const simulatedStudentProfiles = [
   { id: 's1', name: 'Alice Smith', rollNumber: 'CSE001', department: 'CS_BScCS', year: '1', section: 'A', email: 'alice@college.com' },
   { id: 's2', name: 'Bob Johnson', rollNumber: 'CSE002', department: 'CS_BScCS', year: '1', section: 'A', email: 'bob@college.com' },
@@ -20,19 +19,16 @@ const simulatedStudentProfiles = [
 const ViewStudentProfiles: React.FC = () => {
   const [filterDepartment, setFilterDepartment] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
-  // const [filterSection, setFilterSection] = useState('all'); // Removed section
 
   const filteredStudents = simulatedStudentProfiles.filter(student => {
     return (
       (filterDepartment === 'all' || student.department === filterDepartment) &&
       (filterYear === 'all' || student.year === filterYear)
-      // && (filterSection === 'all' || student.section === filterSection) // Removed section filter
     );
   });
 
   const handleViewDetails = (studentName: string) => {
     toast.info(`Simulating viewing details for ${studentName}.`);
-    // In a real app, this would navigate to a detailed student profile page
   };
 
   return (
@@ -42,10 +38,10 @@ const ViewStudentProfiles: React.FC = () => {
         <Card className="max-w-6xl mx-auto">
           <CardHeader>
             <CardTitle>Student Directory</CardTitle>
-            <CardDescription>Browse student profiles by class.</CardDescription> {/* Updated description */}
+            <CardDescription>Browse student profiles by class.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"> {/* Adjusted grid layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <Label htmlFor="filterDepartment">Department</Label>
                 <Select onValueChange={setFilterDepartment} value={filterDepartment}>
@@ -76,7 +72,6 @@ const ViewStudentProfiles: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              {/* Removed Section Select */}
             </div>
 
             <div className="overflow-x-auto border rounded-md">
@@ -85,7 +80,7 @@ const ViewStudentProfiles: React.FC = () => {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Roll Number</TableHead>
-                    <TableHead>Class</TableHead> {/* This will now show Department and Year */}
+                    <TableHead>Class</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -96,7 +91,7 @@ const ViewStudentProfiles: React.FC = () => {
                       <TableRow key={student.id}>
                         <TableCell className="font-medium">{student.name}</TableCell>
                         <TableCell>{student.rollNumber}</TableCell>
-                        <TableCell>{student.department.split('_')[0]} {student.year}</TableCell> {/* Updated class display */}
+                        <TableCell>{student.department.split('_')[0]} {student.year}</TableCell>
                         <TableCell>{student.email}</TableCell>
                         <TableCell className="text-right">
                           <Button size="sm" variant="outline" onClick={() => handleViewDetails(student.name)}>

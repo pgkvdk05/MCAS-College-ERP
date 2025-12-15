@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --background: 220 14.3% 95.9%; /* Very light gray/off-white */
-    --foreground: 220 14.3% 4.9%; /* Darker gray */
+    --background: 220 14.3% 95.9%;
+    --foreground: 220 14.3% 4.9%;
 
     --card: 0 0% 100%;
     --card-foreground: 220 14.3% 4.9%;
@@ -13,10 +13,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 14.3% 4.9%;
 
-    --primary: 210 40% 20%; /* Muted, deep blue */
+    --primary: 210 40% 20%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 220 14.3% 90%; /* Slightly darker light gray */
+    --secondary: 220 14.3% 90%;
     --secondary-foreground: 220 14.3% 20%;
 
     --muted: 220 14.3% 90%;
@@ -30,24 +30,23 @@
 
     --border: 220 14.3% 85%;
     --input: 220 14.3% 85%;
-    --ring: 210 40% 20%; /* Match primary */
+    --ring: 210 40% 20%;
 
-    --radius: 0.75rem; /* Slightly more rounded corners */
+    --radius: 0.75rem;
 
-    /* Sidebar Colors - Light Theme */
-    --sidebar-background: 220 14.3% 92%; /* Light gray, slightly darker than main background */
-    --sidebar-foreground: 220 14.3% 20%; /* Dark gray text */
-    --sidebar-primary: 210 40% 20%; /* Same as primary for active item background */
-    --sidebar-primary-foreground: 210 40% 98%; /* Same as primary-foreground for active item text */
-    --sidebar-accent: 220 14.3% 88%; /* Light accent for hover */
-    --sidebar-accent-foreground: 220 14.3% 20%; /* Dark text for accent hover */
-    --sidebar-border: 220 14.3% 85%; /* Light border */
-    --sidebar-ring: 210 40% 20%; /* Same as ring */
+    --sidebar-background: 220 14.3% 92%;
+    --sidebar-foreground: 220 14.3% 20%;
+    --sidebar-primary: 210 40% 20%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 220 14.3% 88%;
+    --sidebar-accent-foreground: 220 14.3% 20%;
+    --sidebar-border: 220 14.3% 85%;
+    --sidebar-ring: 210 40% 20%;
   }
 
   .dark {
-    --background: 220 14.3% 10%; /* Deep charcoal */
-    --foreground: 220 14.3% 90%; /* Soft white */
+    --background: 220 14.3% 10%;
+    --foreground: 220 14.3% 90%;
 
     --card: 220 14.3% 10%;
     --card-foreground: 220 14.3% 90%;
@@ -55,7 +54,7 @@
     --popover: 220 14.3% 10%;
     --popover-foreground: 220 14.3% 90%;
 
-    --primary: 210 40% 80%; /* Lighter, more vibrant blue for dark mode primary */
+    --primary: 210 40% 80%;
     --primary-foreground: 220 14.3% 10%;
 
     --secondary: 220 14.3% 20%;
@@ -67,22 +66,21 @@
     --accent: 220 14.3% 20%;
     --accent-foreground: 220 14.3% 90%;
 
-    --destructive: 0 72.2% 50.6%; /* Slightly brighter red */
+    --destructive: 0 72.2% 50.6%;
     --destructive-foreground: 220 14.3% 90%;
 
     --border: 220 14.3% 25%;
     --input: 220 14.3% 25%;
-    --ring: 210 40% 80%; /* Match primary */
+    --ring: 210 40% 80%;
 
-    /* Sidebar Colors - Dark Theme */
-    --sidebar-background: 220 14.3% 15%; /* Darker background */
-    --sidebar-foreground: 220 14.3% 90%; /* Light text */
-    --sidebar-primary: 210 40% 80%; /* Same as primary for active item background */
-    --sidebar-primary-foreground: 220 14.3% 10%; /* Same as primary-foreground for active item text */
-    --sidebar-accent: 220 14.3% 20%; /* Dark accent for hover */
-    --sidebar-accent-foreground: 220 14.3% 90%; /* Light text for accent hover */
-    --sidebar-border: 220 14.3% 25%; /* Dark border */
-    --sidebar-ring: 210 40% 80%; /* Same as ring */
+    --sidebar-background: 220 14.3% 15%;
+    --sidebar-foreground: 220 14.3% 90%;
+    --sidebar-primary: 210 40% 80%;
+    --sidebar-primary-foreground: 220 14.3% 10%;
+    --sidebar-accent: 220 14.3% 20%;
+    --sidebar-accent-foreground: 220 14.3% 90%;
+    --sidebar-border: 220 14.3% 25%;
+    --sidebar-ring: 210 40% 80%;
   }
 }
 

@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-// Simulated OD request data
 const simulatedODRequests = [
   { id: 'od1', studentName: 'Alice Smith', rollNumber: 'CSE001', reason: 'Inter-college Debate Competition', date: '2025-03-10', status: 'Pending' },
   { id: 'od2', studentName: 'Bob Johnson', rollNumber: 'CSE002', reason: 'NCC Camp', date: '2025-03-12', status: 'Approved' },
@@ -24,11 +23,10 @@ const ApproveODRequests: React.FC = () => {
       prev.map((req) => (req.id === id ? { ...req, status: action } : req))
     );
     toast.success(`OD Request ${id} ${action}!`);
-    // In a real app, this would trigger an API call to update the request status
   };
 
   return (
-    <MainLayout userRole="TEACHER"> {/* Accessible by Teacher, Admin, Super Admin */}
+    <MainLayout userRole="TEACHER">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Approve OD Requests</h2>
         <Card className="max-w-5xl mx-auto">

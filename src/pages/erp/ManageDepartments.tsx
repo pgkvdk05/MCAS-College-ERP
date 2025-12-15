@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
-// Simulated department data
 const initialDepartments = [
   { id: 'd1', name: 'Commerce (B.Com)', code: 'BCOM' },
   { id: 'd2', name: 'Commerce (B.Com CA)', code: 'BCOMCA' },

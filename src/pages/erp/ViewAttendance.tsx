@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
-// Simulated attendance data for a student
 const simulatedStudentAttendance = [
   { id: 'att1', date: '2024-09-01', subject: 'Mathematics', status: 'Present' },
   { id: 'att2', date: '2024-09-01', subject: 'Physics', status: 'Absent' },
@@ -19,14 +18,14 @@ const simulatedStudentAttendance = [
 ];
 
 const ViewAttendance: React.FC = () => {
-  const [filterSubject, setFilterSubject] = useState('all'); // Initialize with 'all'
+  const [filterSubject, setFilterSubject] = useState('all');
 
   const filteredAttendance = filterSubject === 'all'
     ? simulatedStudentAttendance
     : simulatedStudentAttendance.filter(record => record.subject === filterSubject);
 
   return (
-    <MainLayout userRole="STUDENT"> {/* Assuming Student would access this */}
+    <MainLayout userRole="STUDENT">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">My Attendance</h2>
         <Card className="max-w-3xl mx-auto">
@@ -42,7 +41,7 @@ const ViewAttendance: React.FC = () => {
                   <SelectValue placeholder="All Subjects" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Subjects</SelectItem> {/* Changed value to "all" */}
+                  <SelectItem value="all">All Subjects</SelectItem>
                   <SelectItem value="Mathematics">Mathematics</SelectItem>
                   <SelectItem value="Physics">Physics</SelectItem>
                   <SelectItem value="Chemistry">Chemistry</SelectItem>

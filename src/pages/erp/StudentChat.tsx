@@ -9,7 +9,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send } from 'lucide-react';
 
-// Simulated chat messages
 const initialMessages = [
   { id: 'm1', sender: 'Teacher', text: 'Hello class, remember the assignment is due next Friday.', timestamp: '10:00 AM' },
   { id: 'm2', sender: 'You', text: 'Got it, sir!', timestamp: '10:02 AM' },
@@ -26,7 +25,7 @@ const StudentChat: React.FC = () => {
     if (newMessage.trim()) {
       const newMsg = {
         id: `m${messages.length + 1}`,
-        sender: 'You', // Assuming the student is sending
+        sender: 'You',
         text: newMessage,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };

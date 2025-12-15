@@ -32,65 +32,52 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      {/* Removed <Toaster /> as we are using Sonner */}
       <Sonner />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* Auth Routes */}
           <Route path="/auth/super-admin" element={<AuthPage role="SUPER_ADMIN" defaultUsername="superadmin" />} />
           <Route path="/auth/admin" element={<AuthPage role="ADMIN" defaultUsername="admin" />} />
           <Route path="/auth/teacher" element={<AuthPage role="TEACHER" defaultUsername="teacher" />} />
           <Route path="/auth/student" element={<AuthPage role="STUDENT" defaultUsername="student" />} />
 
-          {/* Dashboard Routes */}
           <Route path="/dashboard/super-admin" element={<DashboardPage userRole="SUPER_ADMIN" />} />
           <Route path="/dashboard/admin" element={<DashboardPage userRole="ADMIN" />} />
           <Route path="/dashboard/teacher" element={<DashboardPage userRole="TEACHER" />} />
           <Route path="/dashboard/student" element={<DashboardPage userRole="STUDENT" />} />
 
-          {/* Profile Routes */}
           <Route path="/profile/super-admin" element={<ProfilePage userRole="SUPER_ADMIN" />} />
           <Route path="/profile/admin" element={<ProfilePage userRole="ADMIN" />} />
           <Route path="/profile/teacher" element={<ProfilePage userRole="TEACHER" />} />
           <Route path="/profile/student" element={<ProfilePage userRole="STUDENT" />} />
 
-          {/* ERP User Management Routes */}
           <Route path="/erp/add-teacher" element={<AddTeacher />} />
           <Route path="/erp/add-student" element={<AddStudent />} />
           <Route path="/erp/manage-users" element={<ManageUsers />} />
 
-          {/* ERP Attendance Routes */}
           <Route path="/erp/attendance/mark" element={<MarkAttendance />} />
           <Route path="/erp/attendance/student" element={<ViewAttendance />} />
           <Route path="/erp/attendance/all" element={<ViewAllAttendance />} />
 
-          {/* ERP Marks Management Routes */}
           <Route path="/erp/marks/upload" element={<UploadMarks />} />
           <Route path="/erp/marks/student" element={<ViewMarks />} />
           <Route path="/erp/marks/all" element={<ViewAllMarks />} />
 
-          {/* ERP Fees Management Routes */}
           <Route path="/erp/fees/student" element={<StudentFees />} />
           <Route path="/erp/fees/admin" element={<AdminFees />} />
 
-          {/* ERP Department & Course Management Routes (Super Admin) */}
           <Route path="/erp/manage-departments" element={<ManageDepartments />} />
           <Route path="/erp/manage-courses" element={<ManageCourses />} />
 
-          {/* ERP OD Request Routes */}
           <Route path="/erp/od/approve" element={<ApproveODRequests />} />
           <Route path="/erp/od/request" element={<RequestOD />} />
 
-          {/* ERP Teacher Specific Routes */}
           <Route path="/erp/teacher/classes" element={<ViewMyClasses />} />
           <Route path="/erp/teacher/student-profiles" element={<ViewStudentProfiles />} />
           <Route path="/erp/chat/teacher" element={<TeacherChat />} />
 
-          {/* ERP Student Specific Routes */}
           <Route path="/erp/chat/student" element={<StudentChat />} />
 
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 
-// Simulated classes assigned to a teacher
 const simulatedTeacherClasses = [
   { id: 'cl1', department: 'Computer Science (B.Sc CS)', year: '1st Year', section: 'A', subject: 'Programming Fundamentals' },
   { id: 'cl2', department: 'Computer Science (BCA)', year: '2nd Year', section: 'B', subject: 'Data Structures' },

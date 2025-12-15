@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 
-// Simulated student data for a class
 const simulatedStudentsForMarks = [
   { id: 's1', rollNumber: 'CSE001', name: 'Alice Smith', marks: '' },
   { id: 's2', rollNumber: 'CSE002', name: 'Bob Johnson', marks: '' },
@@ -21,7 +20,6 @@ const simulatedStudentsForMarks = [
 const UploadMarks: React.FC = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
-  // const [selectedSection, setSelectedSection] = useState(''); // Removed section
   const [selectedSubject, setSelectedSubject] = useState('');
   const [marksData, setMarksData] = useState(simulatedStudentsForMarks);
 
@@ -35,7 +33,7 @@ const UploadMarks: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDepartment || !selectedYear || !selectedSubject) { // Removed selectedSection
+    if (!selectedDepartment || !selectedYear || !selectedSubject) {
       toast.error('Please select department, year, and subject.');
       return;
     }
@@ -45,20 +43,18 @@ const UploadMarks: React.FC = () => {
       rollNumber,
       name,
       subject: selectedSubject,
-      marks: marks === '' ? null : parseFloat(marks), // Convert to number or null
+      marks: marks === '' ? null : parseFloat(marks),
     }));
 
     console.log('Marks Upload Data:', {
       department: selectedDepartment,
       year: selectedYear,
-      // section: selectedSection, // Removed section
       subject: selectedSubject,
       marks: marksToUpload,
     });
     toast.success('Marks uploaded successfully!', {
-      description: `Class: ${selectedDepartment}-${selectedYear}, Subject: ${selectedSubject}`, // Updated description
+      description: `Class: ${selectedDepartment}-${selectedYear}, Subject: ${selectedSubject}`,
     });
-    // In a real application, send this data to your backend API
   };
 
   return (
@@ -72,7 +68,7 @@ const UploadMarks: React.FC = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Adjusted grid layout */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="department">Department</Label>
                   <Select onValueChange={setSelectedDepartment} value={selectedDepartment} required>
@@ -101,8 +97,7 @@ const UploadMarks: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                {/* Removed Section Select */}
-                <div className="md:col-span-2"> {/* Adjusted span for subject */}
+                <div className="md:col-span-2">
                   <Label htmlFor="subject">Subject</Label>
                   <Select onValueChange={setSelectedSubject} value={selectedSubject} required>
                     <SelectTrigger id="subject">
@@ -119,9 +114,9 @@ const UploadMarks: React.FC = () => {
                 </div>
               </div>
 
-              {selectedDepartment && selectedYear && selectedSubject && ( // Removed selectedSection
+              {selectedDepartment && selectedYear && selectedSubject && (
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-3">Enter Marks for {selectedSubject} ({selectedDepartment}-{selectedYear})</h3> {/* Updated title */}
+                  <h3 className="text-lg font-semibold mb-3">Enter Marks for {selectedSubject} ({selectedDepartment}-{selectedYear})</h3>
                   <div className="overflow-x-auto border rounded-md">
                     <Table>
                       <TableHeader>

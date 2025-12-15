@@ -7,7 +7,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-// Simulated user data
 const simulatedUsers = [
   { id: 'sa1', username: 'superadmin', role: 'SUPER_ADMIN', email: 'superadmin@college.com' },
   { id: 'a1', username: 'admin', role: 'ADMIN', email: 'admin@college.com' },
@@ -20,17 +19,15 @@ const ManageUsers: React.FC = () => {
   const handleDelete = (userId: string) => {
     console.log(`Deleting user: ${userId}`);
     toast.info(`Simulated deletion of user ${userId}`);
-    // In a real app, this would trigger an API call to delete the user
   };
 
   const handleEdit = (userId: string) => {
     console.log(`Editing user: ${userId}`);
     toast.info(`Simulated edit for user ${userId}`);
-    // In a real app, this would navigate to an edit user page or open a modal
   };
 
   return (
-    <MainLayout userRole="SUPER_ADMIN"> {/* Only Super Admin can manage users */}
+    <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Manage Users</h2>
         <Card>

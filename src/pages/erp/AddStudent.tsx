@@ -14,7 +14,6 @@ const AddStudent: React.FC = () => {
     rollNumber: '',
     department: '',
     year: '',
-    // section: '', // Removed section
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -30,11 +29,10 @@ const AddStudent: React.FC = () => {
     e.preventDefault();
     console.log('Add Student Form Data:', formData);
     toast.success('Student creation simulated!', { description: JSON.stringify(formData) });
-    // In a real application, you would send this data to your Django backend API
   };
 
   return (
-    <MainLayout userRole="SUPER_ADMIN"> {/* Assuming Super Admin or Admin would access this */}
+    <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Add New Student</h2>
         <Card className="max-w-lg mx-auto">
@@ -76,7 +74,6 @@ const AddStudent: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              {/* Removed Section Input */}
               <Button type="submit" className="w-full">Add Student</Button>
             </form>
           </CardContent>

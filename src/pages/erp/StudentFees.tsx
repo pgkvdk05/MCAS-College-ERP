@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-// Simulated student fee data
 const simulatedStudentFees = [
   { id: 'fee1', type: 'Tuition Fee', amount: 15000, dueDate: '2025-01-15', status: 'Paid' },
   { id: 'fee2', type: 'Exam Fee', amount: 1500, dueDate: '2025-02-01', status: 'Outstanding' },
@@ -20,7 +19,6 @@ const StudentFees: React.FC = () => {
   const handlePayNow = (feeId: string, amount: number, type: string) => {
     console.log(`Simulating payment for fee ${feeId} (${type}) - Amount: ${amount}`);
     toast.info(`Simulating payment for ${type} of ₹${amount}. This would redirect to a payment gateway.`);
-    // In a real application, this would initiate a payment process, e.g., redirect to a payment gateway
   };
 
   const totalOutstanding = simulatedStudentFees

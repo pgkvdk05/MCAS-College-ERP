@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 
-// Simulated course data
 const initialCourses = [
   { id: 'c1', name: 'Calculus I', code: 'MATH101', department: 'Mathematics', credits: 4 },
   { id: 'c2', name: 'Introduction to Programming', code: 'CS101', department: 'Computer Science (B.Sc CS)', credits: 3 },
@@ -24,7 +23,7 @@ const departments = [
   'Computer Science (B.Sc CS)',
   'Computer Science (BCA)',
   'English (B.A English)',
-  'Mathematics', // Added for example
+  'Mathematics',
 ];
 
 const ManageCourses: React.FC = () => {

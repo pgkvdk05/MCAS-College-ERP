@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
-// Simulated fee data for multiple students
 const simulatedAllStudentFees = [
   { id: 'f1', studentName: 'Alice Smith', rollNumber: 'CSE001', type: 'Tuition Fee', amount: 15000, dueDate: '2025-01-15', status: 'Paid' },
   { id: 'f2', studentName: 'Bob Johnson', rollNumber: 'CSE002', type: 'Exam Fee', amount: 1500, dueDate: '2025-02-01', status: 'Outstanding' },
@@ -29,11 +28,10 @@ const AdminFees: React.FC = () => {
   const handleUpdateStatus = (feeId: string, currentStatus: string) => {
     console.log(`Updating status for fee ${feeId}`);
     toast.info(`Simulated status update for fee ${feeId}. Current status: ${currentStatus}`);
-    // In a real app, this would trigger an API call to update the fee status
   };
 
   return (
-    <MainLayout userRole="ADMIN"> {/* Accessible by Admin and Super Admin */}
+    <MainLayout userRole="ADMIN">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Manage Student Fees</h2>
         <Card className="max-w-5xl mx-auto">

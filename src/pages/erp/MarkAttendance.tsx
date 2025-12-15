@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input'; // Ensure this is the shadcn/ui Input
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -16,7 +16,6 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 
-// Simulated student data for a class
 const simulatedStudents = [
   { id: 's1', rollNumber: 'CSE001', name: 'Alice Smith' },
   { id: 's2', rollNumber: 'CSE002', name: 'Bob Johnson' },
@@ -28,13 +27,11 @@ const MarkAttendance: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
-  // const [selectedSection, setSelectedSection] = useState(''); // Removed section
   const [attendance, setAttendance] = useState<{ [key: string]: boolean }>({});
-  const [absenceReasons, setAbsenceReasons] = useState<{ [key: string]: string }>({}); // New state for reasons
+  const [absenceReasons, setAbsenceReasons] = useState<{ [key: string]: string }>({});
 
   const handleAttendanceChange = (studentId: string, isChecked: boolean) => {
     setAttendance((prev) => ({ ...prev, [studentId]: isChecked }));
-    // Clear reason if student is marked present
     if (isChecked) {
       setAbsenceReasons((prev) => {
         const newState = { ...prev };
@@ -50,7 +47,7 @@ const MarkAttendance: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDate || !selectedDepartment || !selectedYear) { // Removed selectedSection
+    if (!selectedDate || !selectedDepartment || !selectedYear) {
       toast.error('Please select date, department, and year.');
       return;
     }
@@ -60,24 +57,22 @@ const MarkAttendance: React.FC = () => {
       rollNumber: student.rollNumber,
       name: student.name,
       status: attendance[student.id] ? 'Present' : 'Absent',
-      reason: attendance[student.id] ? undefined : absenceReasons[student.id] || undefined, // Include reason if absent
+      reason: attendance[student.id] ? undefined : absenceReasons[student.id] || undefined,
     }));
 
     console.log('Attendance Data:', {
       date: selectedDate.toISOString().split('T')[0],
       department: selectedDepartment,
       year: selectedYear,
-      // section: selectedSection, // Removed section
       records: attendanceRecords,
     });
     toast.success('Attendance marked successfully!', {
-      description: `Date: ${format(selectedDate, 'PPP')}, Class: ${selectedDepartment}-${selectedYear}`, // Updated description
+      description: `Date: ${format(selectedDate, 'PPP')}, Class: ${selectedDepartment}-${selectedYear}`,
     });
-    // In a real application, send this data to your backend API
   };
 
   return (
-    <MainLayout userRole="TEACHER"> {/* Assuming Teacher or Admin would access this */}
+    <MainLayout userRole="TEACHER">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Mark Attendance</h2>
         <Card className="max-w-3xl mx-auto">
@@ -141,12 +136,11 @@ const MarkAttendance: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                {/* Removed Section Select */}
               </div>
 
-              {selectedDepartment && selectedYear && ( // Removed selectedSection
+              {selectedDepartment && selectedYear && (
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-3">Students in {selectedDepartment}-{selectedYear}</h3> {/* Updated title */}
+                  <h3 className="text-lg font-semibold mb-3">Students in {selectedDepartment}-{selectedYear}</h3>
                   <div className="overflow-x-auto border rounded-md">
                     <Table>
                       <TableHeader>
@@ -154,7 +148,7 @@ const MarkAttendance: React.FC = () => {
                           <TableHead>Roll Number</TableHead>
                           <TableHead>Name</TableHead>
                           <TableHead className="text-center">Present</TableHead>
-                          <TableHead>Reason (if absent)</TableHead> {/* New column header */}
+                          <TableHead>Reason (if absent)</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -169,7 +163,7 @@ const MarkAttendance: React.FC = () => {
                               />
                             </TableCell>
                             <TableCell>
-                              {!attendance[student.id] && ( // Only show if student is marked absent
+                              {!attendance[student.id] && (
                                 <Input
                                   type="text"
                                   placeholder="Reason for absence (optional)"

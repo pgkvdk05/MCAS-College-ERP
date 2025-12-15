@@ -42,7 +42,6 @@ const RequestOD: React.FC = () => {
     toast.success('OD Request Submitted!', {
       description: `Your request for ${format(selectedDate, 'PPP')} has been sent for approval.`,
     });
-    // In a real application, you would send this data (including file upload) to your backend API
     setReason('');
     setSelectedDate(new Date());
     setSupportingDocument(null);

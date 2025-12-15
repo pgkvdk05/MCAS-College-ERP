@@ -14,7 +14,6 @@ import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Simulated attendance data for multiple students/classes
 const simulatedAllAttendance = [
   { id: 'a1', date: '2024-09-01', studentName: 'Alice Smith', rollNumber: 'CSE001', subject: 'Mathematics', status: 'Present', department: 'CS_BScCS', year: '1', section: 'A' },
   { id: 'a2', date: '2024-09-01', studentName: 'Bob Johnson', rollNumber: 'CSE002', subject: 'Physics', status: 'Absent', department: 'CS_BScCS', year: '1', section: 'A' },
@@ -27,7 +26,6 @@ const ViewAllAttendance: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [filterDepartment, setFilterDepartment] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
-  // const [filterSection, setFilterSection] = useState('all'); // Removed section
 
   const filteredAttendance = simulatedAllAttendance.filter(record => {
     const recordDate = new Date(record.date).toDateString();
@@ -37,7 +35,6 @@ const ViewAllAttendance: React.FC = () => {
       (filterDate === '' || recordDate === filterDate) &&
       (filterDepartment === 'all' || record.department === filterDepartment) &&
       (filterYear === 'all' || record.year === filterYear)
-      // && (filterSection === 'all' || record.section === filterSection) // Removed section filter
     );
   });
 
@@ -51,7 +48,7 @@ const ViewAllAttendance: React.FC = () => {
             <CardDescription>View attendance for all students across different classes and dates.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"> {/* Adjusted grid layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               <div>
                 <Label htmlFor="date">Date</Label>
                 <Popover>
@@ -107,7 +104,6 @@ const ViewAllAttendance: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              {/* Removed Section Select */}
             </div>
 
             <div className="overflow-x-auto border rounded-md">
@@ -117,7 +113,7 @@ const ViewAllAttendance: React.FC = () => {
                     <TableHead>Date</TableHead>
                     <TableHead>Student Name</TableHead>
                     <TableHead>Roll Number</TableHead>
-                    <TableHead>Class</TableHead> {/* This will now show Department and Year */}
+                    <TableHead>Class</TableHead>
                     <TableHead>Subject</TableHead>
                     <TableHead className="text-center">Status</TableHead>
                   </TableRow>
@@ -129,7 +125,7 @@ const ViewAllAttendance: React.FC = () => {
                         <TableCell>{record.date}</TableCell>
                         <TableCell className="font-medium">{record.studentName}</TableCell>
                         <TableCell>{record.rollNumber}</TableCell>
-                        <TableCell>{record.department.split('_')[0]} {record.year}</TableCell> {/* Updated class display */}
+                        <TableCell>{record.department.split('_')[0]} {record.year}</TableCell>
                         <TableCell>{record.subject}</TableCell>
                         <TableCell className="text-center">
                           <Badge variant={record.status === 'Present' ? 'default' : 'destructive'}>

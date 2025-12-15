@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
-// Simulated marks data for multiple students/classes
 const simulatedAllMarks = [
   { id: 'm1', studentName: 'Alice Smith', rollNumber: 'CSE001', subject: 'Mathematics', marks: 85, grade: 'A', department: 'CS_BScCS', year: '1', section: 'A' },
   { id: 'm2', studentName: 'Bob Johnson', rollNumber: 'CSE002', subject: 'Physics', marks: 72, grade: 'B', department: 'CS_BScCS', year: '1', section: 'A' },
@@ -20,14 +19,12 @@ const simulatedAllMarks = [
 const ViewAllMarks: React.FC = () => {
   const [filterDepartment, setFilterDepartment] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
-  // const [filterSection, setFilterSection] = useState('all'); // Removed section
   const [filterSubject, setFilterSubject] = useState('all');
 
   const filteredMarks = simulatedAllMarks.filter(record => {
     return (
       (filterDepartment === 'all' || record.department === filterDepartment) &&
       (filterYear === 'all' || record.year === filterYear) &&
-      // (filterSection === 'all' || record.section === filterSection) && // Removed section filter
       (filterSubject === 'all' || record.subject === filterSubject)
     );
   });
@@ -36,7 +33,7 @@ const ViewAllMarks: React.FC = () => {
     if (grade === 'A+' || grade === 'A') return 'default';
     if (grade === 'B+' || grade === 'B') return 'secondary';
     if (grade === 'C+' || grade === 'C') return 'outline';
-    return 'destructive'; // For D, F, etc.
+    return 'destructive';
   };
 
   return (
@@ -49,7 +46,7 @@ const ViewAllMarks: React.FC = () => {
             <CardDescription>View marks for all students across different classes and subjects.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"> {/* Adjusted grid layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               <div>
                 <Label htmlFor="filterDepartment">Department</Label>
                 <Select onValueChange={setFilterDepartment} value={filterDepartment}>
@@ -80,8 +77,7 @@ const ViewAllMarks: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              {/* Removed Section Select */}
-              <div className="md:col-span-1"> {/* Adjusted span for subject */}
+              <div className="md:col-span-1">
                 <Label htmlFor="filterSubject">Subject</Label>
                 <Select onValueChange={setFilterSubject} value={filterSubject}>
                   <SelectTrigger id="filterSubject">
@@ -107,7 +103,7 @@ const ViewAllMarks: React.FC = () => {
                   <TableRow>
                     <TableHead>Student Name</TableHead>
                     <TableHead>Roll Number</TableHead>
-                    <TableHead>Class</TableHead> {/* This will now show Department and Year */}
+                    <TableHead>Class</TableHead>
                     <TableHead>Subject</TableHead>
                     <TableHead className="text-right">Marks</TableHead>
                     <TableHead className="text-center">Grade</TableHead>
@@ -119,7 +115,7 @@ const ViewAllMarks: React.FC = () => {
                       <TableRow key={record.id}>
                         <TableCell className="font-medium">{record.studentName}</TableCell>
                         <TableCell>{record.rollNumber}</TableCell>
-                        <TableCell>{record.department.split('_')[0]} {record.year}</TableCell> {/* Updated class display */}
+                        <TableCell>{record.department.split('_')[0]} {record.year}</TableCell>
                         <TableCell>{record.subject}</TableCell>
                         <TableCell className="text-right">{record.marks}</TableCell>
                         <TableCell className="text-center">

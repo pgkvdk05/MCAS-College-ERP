@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
-// Simulated marks data for a student
 const simulatedStudentMarks = [
   { id: 'm1', subject: 'Mathematics', marks: 85, grade: 'A' },
   { id: 'm2', subject: 'Physics', marks: 72, grade: 'B' },
@@ -18,7 +17,7 @@ const simulatedStudentMarks = [
 ];
 
 const ViewMarks: React.FC = () => {
-  const [filterSubject, setFilterSubject] = useState('all'); // Initialize with 'all'
+  const [filterSubject, setFilterSubject] = useState('all');
 
   const filteredMarks = filterSubject === 'all'
     ? simulatedStudentMarks
@@ -28,7 +27,7 @@ const ViewMarks: React.FC = () => {
     if (grade === 'A+' || grade === 'A') return 'default';
     if (grade === 'B+' || grade === 'B') return 'secondary';
     if (grade === 'C+' || grade === 'C') return 'outline';
-    return 'destructive'; // For D, F, etc.
+    return 'destructive';
   };
 
   return (
@@ -48,7 +47,7 @@ const ViewMarks: React.FC = () => {
                   <SelectValue placeholder="All Subjects" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Subjects</SelectItem> {/* Changed value to "all" */}
+                  <SelectItem value="all">All Subjects</SelectItem>
                   <SelectItem value="Mathematics">Mathematics</SelectItem>
                   <SelectItem value="Physics">Physics</SelectItem>
                   <SelectItem value="Chemistry">Chemistry</SelectItem>
