@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import {
   Users, BookUser, GraduationCap, Building2, BookOpen, DollarSign, CalendarCheck,
-  ClipboardList, FileText, MessageSquareText, LayoutDashboard
+  ClipboardList, FileText, MessageSquareText, LayoutDashboard, User
 } from 'lucide-react';
 
 interface DashboardPageProps {
@@ -35,6 +35,7 @@ const dashboardConfig = {
         description: 'Manage all user accounts and roles within the ERP system.',
         type: 'links',
         items: [
+          { name: 'My Profile', href: '/profile/super-admin', icon: User },
           { name: 'Add New Teacher', href: '/erp/add-teacher', icon: BookUser },
           { name: 'Add New Student', href: '/erp/add-student', icon: GraduationCap },
           { name: 'View & Manage All Users', href: '/erp/manage-users', icon: Users, variant: 'outline' },
@@ -56,6 +57,14 @@ const dashboardConfig = {
   ADMIN: {
     title: 'Admin Dashboard',
     sections: [
+      {
+        title: 'Personal',
+        description: 'View and manage your personal profile.',
+        type: 'links',
+        items: [
+          { name: 'My Profile', href: '/profile/admin', icon: User },
+        ],
+      },
       {
         title: 'Administrative Tasks',
         description: '',
@@ -83,6 +92,14 @@ const dashboardConfig = {
     title: 'Teacher Dashboard',
     sections: [
       {
+        title: 'Personal',
+        description: 'View and manage your personal profile.',
+        type: 'links',
+        items: [
+          { name: 'My Profile', href: '/profile/teacher', icon: User },
+        ],
+      },
+      {
         title: 'Academic Management',
         description: '',
         type: 'links',
@@ -107,6 +124,14 @@ const dashboardConfig = {
   STUDENT: {
     title: 'Student Dashboard',
     sections: [
+      {
+        title: 'Personal',
+        description: 'View and manage your personal profile.',
+        type: 'links',
+        items: [
+          { name: 'My Profile', href: '/profile/student', icon: User },
+        ],
+      },
       {
         title: 'Student Services',
         description: '',

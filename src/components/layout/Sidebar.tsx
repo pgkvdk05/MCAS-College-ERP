@@ -8,7 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   LayoutDashboard, Users, BookUser, GraduationCap,
   ClipboardList, DollarSign, Building2, BookOpen,
-  MessageSquareText, CalendarCheck, FileText
+  MessageSquareText, CalendarCheck, FileText, User
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -18,6 +18,7 @@ interface SidebarProps {
 const navigationItems = {
   SUPER_ADMIN: [
     { name: 'Dashboard', href: '/dashboard/super-admin', icon: LayoutDashboard },
+    { name: 'My Profile', href: '/profile/super-admin', icon: User },
     { name: 'Manage Users', href: '/erp/manage-users', icon: Users },
     { name: 'Add Teacher', href: '/erp/add-teacher', icon: BookUser },
     { name: 'Add Student', href: '/erp/add-student', icon: GraduationCap },
@@ -28,6 +29,7 @@ const navigationItems = {
   ],
   ADMIN: [
     { name: 'Dashboard', href: '/dashboard/admin', icon: LayoutDashboard },
+    { name: 'My Profile', href: '/profile/admin', icon: User },
     { name: 'Add Teacher', href: '/erp/add-teacher', icon: BookUser },
     { name: 'Add Student', href: '/erp/add-student', icon: GraduationCap },
     { name: 'Mark Attendance', href: '/erp/attendance/mark', icon: ClipboardList },
@@ -38,6 +40,7 @@ const navigationItems = {
   ],
   TEACHER: [
     { name: 'Dashboard', href: '/dashboard/teacher', icon: LayoutDashboard },
+    { name: 'My Profile', href: '/profile/teacher', icon: User },
     { name: 'Mark Attendance', href: '/erp/attendance/mark', icon: ClipboardList },
     { name: 'Upload Marks', href: '/erp/marks/upload', icon: FileText },
     { name: 'View My Classes', href: '/erp/teacher/classes', icon: BookOpen },
@@ -47,6 +50,7 @@ const navigationItems = {
   ],
   STUDENT: [
     { name: 'Dashboard', href: '/dashboard/student', icon: LayoutDashboard },
+    { name: 'My Profile', href: '/profile/student', icon: User },
     { name: 'View Attendance', href: '/erp/attendance/student', icon: CalendarCheck },
     { name: 'View Marks', href: '/erp/marks/student', icon: FileText },
     { name: 'View Fee Status', href: '/erp/fees/student', icon: DollarSign },

@@ -25,6 +25,7 @@ import StudentChat from "./pages/erp/StudentChat";
 import RequestOD from "./pages/erp/RequestOD";
 import AuthPage from "./components/auth/AuthPage";
 import DashboardPage from "./components/layout/DashboardPage";
+import ProfilePage from "./pages/erp/ProfilePage";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,12 @@ const App = () => (
           <Route path="/dashboard/admin" element={<DashboardPage userRole="ADMIN" />} />
           <Route path="/dashboard/teacher" element={<DashboardPage userRole="TEACHER" />} />
           <Route path="/dashboard/student" element={<DashboardPage userRole="STUDENT" />} />
+
+          {/* Profile Routes */}
+          <Route path="/profile/super-admin" element={<ProfilePage userRole="SUPER_ADMIN" />} />
+          <Route path="/profile/admin" element={<ProfilePage userRole="ADMIN" />} />
+          <Route path="/profile/teacher" element={<ProfilePage userRole="TEACHER" />} />
+          <Route path="/profile/student" element={<ProfilePage userRole="STUDENT" />} />
 
           {/* ERP User Management Routes */}
           <Route path="/erp/add-teacher" element={<AddTeacher />} />
