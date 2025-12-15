@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,40 +8,84 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client'; // Import Supabase client
 
-const initialDepartments = [
-  { id: 'd1', name: 'Commerce (B.Com)', code: 'BCOM' },
-  { id: 'd2', name: 'Commerce (B.Com CA)', code: 'BCOMCA' },
-  { id: 'd3', name: 'Computer Science (B.Sc CS)', code: 'BSCCS' },
-  { id: 'd4', name: 'Computer Science (BCA)', code: 'BCA' },
-  { id: 'd5', name: 'English (B.A English)', code: 'BAENG' },
-];
+interface Department {
+  id: string;
+  name: string;
+  code: string;
+}
 
 const ManageDepartments: React.FC = () => {
-  const [departments, setDepartments] = useState(initialDepartments);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [newDepartmentName, setNewDepartmentName] = useState('');
   const [newDepartmentCode, setNewDepartmentCode] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAddDepartment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newDepartmentName.trim() && newDepartmentCode.trim()) {
-      const newDept = {
-        id: `d${departments.length + 1}`,
-        name: newDepartmentName,
-        code: newDepartmentCode.toUpperCase(),
-      };
-      setDepartments((prev) => [...prev, newDept]);
-      setNewDepartmentName('');
-      setNewDepartmentCode('');
-      toast.success(`Department '${newDepartmentName}' added.`);
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
+
+  const fetchDepartments = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('departments')
+      .select('id, name, code')
+      .order('name', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching departments:', error);
+      toast.error('Failed to load departments.', { description: error.message });
+      setDepartments([]);
     } else {
-      toast.error('Please enter both department name and code.');
+      setDepartments(data as Department[]);
     }
+    setLoading(false);
   };
 
-  const handleDeleteDepartment = (id: string, name: string) => {
-    setDepartments((prev) => prev.filter((dept) => dept.id !== id));
-    toast.info(`Department '${name}' deleted.`);
+  const handleAddDepartment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDepartmentName.trim() || !newDepartmentCode.trim()) {
+      toast.error('Please enter both department name and code.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    const { data, error } = await supabase
+      .from('departments')
+      .insert([{ name: newDepartmentName.trim(), code: newDepartmentCode.trim().toUpperCase() }])
+      .select();
+
+    if (error) {
+      console.error('Error adding department:', error);
+      toast.error('Failed to add department.', { description: error.message });
+    } else if (data && data.length > 0) {
+      toast.success(`Department '${newDepartmentName}' added successfully.`);
+      setNewDepartmentName('');
+      setNewDepartmentCode('');
+      fetchDepartments(); // Re-fetch to update the list
+    }
+    setIsSubmitting(false);
+  };
+
+  const handleDeleteDepartment = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete department '${name}'? This action cannot be undone.`)) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('departments')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting department:', error);
+      toast.error('Failed to delete department.', { description: error.message });
+    } else {
+      toast.info(`Department '${name}' deleted.`);
+      fetchDepartments(); // Re-fetch to update the list
+    }
   };
 
   return (
@@ -64,6 +108,7 @@ const ManageDepartments: React.FC = () => {
                   value={newDepartmentName}
                   onChange={(e) => setNewDepartmentName(e.target.value)}
                   required
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="md:col-span-1">
@@ -75,10 +120,13 @@ const ManageDepartments: React.FC = () => {
                   value={newDepartmentCode}
                   onChange={(e) => setNewDepartmentCode(e.target.value)}
                   required
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="md:col-span-1 flex items-end">
-                <Button type="submit" className="w-full">Add Department</Button>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? 'Adding...' : 'Add Department'}
+                </Button>
               </div>
             </form>
 
@@ -92,7 +140,13 @@ const ManageDepartments: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {departments.length > 0 ? (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center text-muted-foreground">
+                        Loading departments...
+                      </TableCell>
+                    </TableRow>
+                  ) : departments.length > 0 ? (
                     departments.map((dept) => (
                       <TableRow key={dept.id}>
                         <TableCell className="font-medium">{dept.name}</TableCell>
