@@ -9,9 +9,10 @@ import {
   Users, BookUser, GraduationCap, Building2, BookOpen, DollarSign, CalendarCheck,
   ClipboardList, FileText, MessageSquareText, LayoutDashboard, User
 } from 'lucide-react';
+import { useSession } from '@/components/auth/SessionContextProvider'; // Import useSession
 
 interface DashboardPageProps {
-  userRole: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT';
+  userRole: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT'; // Still used for specific dashboard content logic
 }
 
 // Define dashboard content for each role
@@ -148,21 +149,32 @@ const dashboardConfig = {
   },
 };
 
-const DashboardPage: React.FC<DashboardPageProps> = ({ userRole }) => {
-  const config = dashboardConfig[userRole];
+const DashboardPage: React.FC<DashboardPageProps> = ({ userRole: propUserRole }) => {
+  const { userRole: contextUserRole, loading } = useSession();
+  const currentRole = contextUserRole || propUserRole; // Prioritize context role
+
+  if (loading) {
+    return (
+      <MainLayout userRole={currentRole}>
+        <div className="text-center text-muted-foreground">Loading dashboard...</div>
+      </MainLayout>
+    );
+  }
+
+  const config = dashboardConfig[currentRole];
 
   if (!config) {
     return (
-      <MainLayout userRole={userRole}>
+      <MainLayout userRole={currentRole}>
         <div className="text-center text-destructive">
-          Dashboard configuration not found for role: {userRole}
+          Dashboard configuration not found for role: {currentRole}
         </div>
       </MainLayout>
     );
   }
 
   return (
-    <MainLayout userRole={userRole}>
+    <MainLayout userRole={currentRole}>
       <div className="space-y-8">
         <h2 className="text-4xl font-bold text-primary mb-6">{config.title}</h2>
 

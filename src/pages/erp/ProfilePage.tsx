@@ -1,60 +1,91 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useSession } from '@/components/auth/SessionContextProvider';
+import { supabase } from '@/integrations/supabase/client';
+import { showError } from '@/utils/toast';
 
 interface ProfilePageProps {
-  userRole: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT';
+  userRole: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT'; // Still used for initial routing, but data fetched dynamically
 }
 
-const mockUserData = {
-  SUPER_ADMIN: {
-    name: 'Super Admin',
-    username: 'superadmin',
-    email: 'superadmin@college.com',
-    role: 'SUPER_ADMIN',
-    employeeId: 'SA001',
-  },
-  ADMIN: {
-    name: 'Admin User',
-    username: 'admin',
-    email: 'admin@college.com',
-    role: 'ADMIN',
-    employeeId: 'AD001',
-    department: 'Administration',
-  },
-  TEACHER: {
-    name: 'Teacher Jane Doe',
-    username: 'teacher',
-    email: 'teacher@college.com',
-    role: 'TEACHER',
-    employeeId: 'T001',
-    department: 'Computer Science (B.Sc CS)',
-    designation: 'Assistant Professor',
-  },
-  STUDENT: {
-    name: 'Student John Doe',
-    username: 'student',
-    email: 'student@college.com',
-    role: 'STUDENT',
-    rollNumber: 'CSE001',
-    department: 'Computer Science (B.Sc CS)',
-    year: '1st Year',
-  },
-};
+interface UserProfile {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  username: string | null;
+  email: string | null;
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null;
+  employee_id: string | null;
+  roll_number: string | null;
+  department_id: string | null; // UUID for department
+  year: string | null;
+  designation: string | null;
+  avatar_url: string | null;
+}
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ userRole }) => {
-  const userData = mockUserData[userRole];
+const ProfilePage: React.FC<ProfilePageProps> = () => {
+  const { user, userRole, loading: sessionLoading } = useSession();
+  const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  const [departmentName, setDepartmentName] = useState<string | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
-  if (!userData) {
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user || sessionLoading) {
+        setLoadingProfile(false);
+        return;
+      }
+
+      setLoadingProfile(true);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          departments (
+            name
+          )
+        `)
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        showError('Failed to load profile data.');
+        setProfileData(null);
+        setDepartmentName(null);
+      } else if (data) {
+        setProfileData(data as UserProfile);
+        if (data.departments) {
+          setDepartmentName((data.departments as { name: string }).name);
+        } else {
+          setDepartmentName(null);
+        }
+      }
+      setLoadingProfile(false);
+    };
+
+    fetchProfile();
+  }, [user, sessionLoading]);
+
+  if (sessionLoading || loadingProfile) {
+    return (
+      <MainLayout userRole={userRole}>
+        <div className="text-center text-muted-foreground">Loading profile...</div>
+      </MainLayout>
+    );
+  }
+
+  if (!user || !profileData) {
     return (
       <MainLayout userRole={userRole}>
         <div className="text-center text-destructive">
-          Profile data not found for role: {userRole}
+          No profile data found. Please ensure you are logged in and your profile exists.
         </div>
       </MainLayout>
     );
@@ -67,50 +98,50 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userRole }) => {
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="flex flex-col items-center text-center">
             <Avatar className="h-24 w-24 mb-4">
-              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${userData.name}`} alt={userData.name} />
-              <AvatarFallback>{userData.name.substring(0, 2)}</AvatarFallback>
+              <AvatarImage src={profileData.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profileData.first_name || profileData.username || 'User'}`} alt={profileData.username || 'User'} />
+              <AvatarFallback>{(profileData.first_name || profileData.username || 'U').substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
-            <CardTitle className="text-2xl">{userData.name}</CardTitle>
-            <CardDescription className="text-muted-foreground">{userData.role.replace('_', ' ')}</CardDescription>
+            <CardTitle className="text-2xl">{profileData.first_name} {profileData.last_name}</CardTitle>
+            <CardDescription className="text-muted-foreground">{profileData.role?.replace('_', ' ')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="username">Username</Label>
-                <Input id="username" value={userData.username} readOnly className="bg-muted/50" />
+                <Input id="username" value={profileData.username || ''} readOnly className="bg-muted/50" />
               </div>
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" value={userData.email} readOnly className="bg-muted/50" />
+                <Input id="email" value={profileData.email || user.email || ''} readOnly className="bg-muted/50" />
               </div>
-              {'employeeId' in userData && (
+              {profileData.employee_id && (
                 <div>
                   <Label htmlFor="employeeId">Employee ID</Label>
-                  <Input id="employeeId" value={userData.employeeId} readOnly className="bg-muted/50" />
+                  <Input id="employeeId" value={profileData.employee_id} readOnly className="bg-muted/50" />
                 </div>
               )}
-              {'rollNumber' in userData && (
+              {profileData.roll_number && (
                 <div>
                   <Label htmlFor="rollNumber">Roll Number</Label>
-                  <Input id="rollNumber" value={userData.rollNumber} readOnly className="bg-muted/50" />
+                  <Input id="rollNumber" value={profileData.roll_number} readOnly className="bg-muted/50" />
                 </div>
               )}
-              {'department' in userData && (
+              {departmentName && (
                 <div>
                   <Label htmlFor="department">Department</Label>
-                  <Input id="department" value={userData.department} readOnly className="bg-muted/50" />
+                  <Input id="department" value={departmentName} readOnly className="bg-muted/50" />
                 </div>
               )}
-              {'year' in userData && (
+              {profileData.year && (
                 <div>
                   <Label htmlFor="year">Year</Label>
-                  <Input id="year" value={userData.year} readOnly className="bg-muted/50" />
+                  <Input id="year" value={profileData.year} readOnly className="bg-muted/50" />
                 </div>
               )}
-              {'designation' in userData && (
+              {profileData.designation && (
                 <div>
                   <Label htmlFor="designation">Designation</Label>
-                  <Input id="designation" value={userData.designation} readOnly className="bg-muted/50" />
+                  <Input id="designation" value={profileData.designation} readOnly className="bg-muted/50" />
                 </div>
               )}
             </div>

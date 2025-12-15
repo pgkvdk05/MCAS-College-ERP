@@ -3,14 +3,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import { useSession } from '@/components/auth/SessionContextProvider'; // Import useSession
+import { supabase } from '@/integrations/supabase/client'; // Import supabase client
+import { Button } from '@/components/ui/button'; // Import Button component
 
 interface MainLayoutProps {
   children: React.ReactNode;
-  userRole?: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null;
+  userRole?: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null; // Keep for explicit overrides if needed, but prefer context
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children, userRole = null }) => {
-  const showSidebar = userRole !== null;
+const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const { user, userRole, loading } = useSession(); // Get session data from context
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    // Redirection handled by SessionContextProvider's onAuthStateChange
+  };
+
+  // If loading, don't render layout content yet
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        Loading user session...
+      </div>
+    );
+  }
+
+  const showSidebar = userRole !== null; // Show sidebar if a role is determined
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -23,14 +42,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, userRole = null }) =>
           {userRole && (
             <span className="text-sm">Role: {userRole.replace('_', ' ')}</span>
           )}
-          {userRole && (
-            <Link to="/" className="text-sm hover:underline">Logout</Link>
+          {user && ( // Show logout only if a user is logged in
+            <Button variant="ghost" onClick={handleLogout} className="text-sm hover:underline text-primary-foreground">
+              Logout
+            </Button>
           )}
         </nav>
       </header>
 
       <div className="flex flex-grow">
-        {showSidebar && <Sidebar userRole={userRole} />}
+        {showSidebar && <Sidebar userRole={userRole} />} {/* Pass userRole from context */}
         <main className="flex-grow container mx-auto p-6">
           {children}
         </main>
