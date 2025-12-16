@@ -40,7 +40,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ role, defaultUsername }) => {
   const handleGoogleLogin = async () => {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: 'google', // This line correctly specifies the Google provider
       options: {
         redirectTo: window.location.origin,
       }
