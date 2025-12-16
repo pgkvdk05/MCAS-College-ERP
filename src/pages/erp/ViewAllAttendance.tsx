@@ -1,143 +1,188 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { useDepartments } from '@/hooks/useDepartments';
+import { toast } from 'sonner';
 
-const simulatedAllAttendance = [
-  { id: 'a1', date: '2024-09-01', studentName: 'Alice Smith', rollNumber: 'CSE001', subject: 'Mathematics', status: 'Present', department: 'CS_BScCS', year: '1', section: 'A' },
-  { id: 'a2', date: '2024-09-01', studentName: 'Bob Johnson', rollNumber: 'CSE002', subject: 'Physics', status: 'Absent', department: 'CS_BScCS', year: '1', section: 'A' },
-  { id: 'a3', date: '2024-09-02', studentName: 'Charlie Brown', rollNumber: 'BCOM001', subject: 'Economics', status: 'Present', department: 'Commerce_BCom', year: '2', section: 'B' },
-  { id: 'a4', date: '2024-09-02', studentName: 'Diana Prince', rollNumber: 'BCOMCA001', subject: 'Accounting', status: 'Present', department: 'Commerce_BComCA', year: '3', section: 'C' },
-  { id: 'a5', date: '2024-09-03', studentName: 'Alice Smith', rollNumber: 'CSE001', subject: 'Chemistry', status: 'Present', department: 'CS_BScCS', year: '1', section: 'A' },
-];
+interface AttendanceLog {
+  id: string;
+  date: string;
+  status: string;
+  student: {
+    first_name: string;
+    last_name: string;
+    roll_number: string;
+  };
+  course: {
+    name: string;
+    code: string;
+  };
+}
 
 const ViewAllAttendance: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const { departments } = useDepartments();
+  const [logs, setLogs] = useState<AttendanceLog[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Filters
+  const [filterDate, setFilterDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [filterDepartment, setFilterDepartment] = useState('all');
-  const [filterYear, setFilterYear] = useState('all');
 
-  const filteredAttendance = simulatedAllAttendance.filter(record => {
-    const recordDate = new Date(record.date).toDateString();
-    const filterDate = selectedDate ? selectedDate.toDateString() : '';
+  useEffect(() => {
+    fetchLogs();
+  }, [filterDate, filterDepartment]);
 
-    return (
-      (filterDate === '' || recordDate === filterDate) &&
-      (filterDepartment === 'all' || record.department === filterDepartment) &&
-      (filterYear === 'all' || record.year === filterYear)
-    );
-  });
+  const fetchLogs = async () => {
+    setLoading(true);
+    try {
+      let query = supabase
+        .from('attendance')
+        .select(`
+          id,
+          date,
+          status,
+          profiles!inner (
+            first_name,
+            last_name,
+            roll_number,
+            department_id
+          ),
+          courses (
+            name,
+            code
+          )
+        `)
+        .eq('date', filterDate)
+        .order('created_at', { ascending: false });
+
+      if (filterDepartment !== 'all') {
+        // Filter by student's department
+        // Note: The !inner join on profiles above allows filtering by profile fields
+        query = query.eq('profiles.department_id', filterDepartment);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      // Map Supabase response to cleaner object structure
+      const formattedData = data.map((item: any) => ({
+        id: item.id,
+        date: item.date,
+        status: item.status,
+        student: {
+          first_name: item.profiles.first_name,
+          last_name: item.profiles.last_name,
+          roll_number: item.profiles.roll_number,
+        },
+        course: {
+          name: item.courses?.name || 'Unknown',
+          code: item.courses?.code || '-',
+        }
+      }));
+
+      setLogs(formattedData);
+    } catch (error: any) {
+      console.error('Error fetching attendance logs:', error);
+      toast.error('Failed to load attendance logs.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <MainLayout userRole="ADMIN">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">View All Attendance</h2>
-        <Card className="max-w-6xl mx-auto">
-          <CardHeader>
-            <CardTitle>Comprehensive Attendance Records</CardTitle>
-            <CardDescription>View attendance for all students across different classes and dates.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-              <div>
+        <h2 className="text-3xl font-bold text-primary">Attendance Logs</h2>
+
+        <div className="flex flex-col md:flex-row gap-4">
+          <Card className="w-full">
+            <CardHeader className="pb-3">
+              <CardTitle>Filters</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="w-full md:w-1/3">
                 <Label htmlFor="date">Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !selectedDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={setSelectedDate}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Input
+                  type="date"
+                  id="date"
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                />
               </div>
-              <div>
-                <Label htmlFor="filterDepartment">Department</Label>
+              <div className="w-full md:w-1/3">
+                <Label htmlFor="dept">Department</Label>
                 <Select onValueChange={setFilterDepartment} value={filterDepartment}>
-                  <SelectTrigger id="filterDepartment">
+                  <SelectTrigger id="dept">
                     <SelectValue placeholder="All Departments" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
-                    <SelectItem value="Commerce_BCom">Commerce (B.Com)</SelectItem>
-                    <SelectItem value="Commerce_BComCA">Commerce (B.Com CA)</SelectItem>
-                    <SelectItem value="CS_BScCS">Computer Science (B.Sc CS)</SelectItem>
-                    <SelectItem value="CS_BCA">Computer Science (BCA)</SelectItem>
-                    <SelectItem value="English_BA">English (B.A English)</SelectItem>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="filterYear">Year</Label>
-                <Select onValueChange={setFilterYear} value={filterYear}>
-                  <SelectTrigger id="filterYear">
-                    <SelectValue placeholder="All Years" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Years</SelectItem>
-                    <SelectItem value="1">1st Year</SelectItem>
-                    <SelectItem value="2">2nd Year</SelectItem>
-                    <SelectItem value="3">3rd Year</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="w-full md:w-1/3 pb-0.5">
+                <Button onClick={fetchLogs} variant="outline" className="w-full">Refresh</Button>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+        </div>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>Records for {filterDate}</CardTitle>
+            <CardDescription>Showing {logs.length} records.</CardDescription>
+          </CardHeader>
+          <CardContent>
             <div className="overflow-x-auto border rounded-md">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Student Name</TableHead>
-                    <TableHead>Roll Number</TableHead>
-                    <TableHead>Class</TableHead>
-                    <TableHead>Subject</TableHead>
+                    <TableHead>Student</TableHead>
+                    <TableHead>Roll No</TableHead>
+                    <TableHead>Course</TableHead>
                     <TableHead className="text-center">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredAttendance.length > 0 ? (
-                    filteredAttendance.map((record) => (
-                      <TableRow key={record.id}>
-                        <TableCell>{record.date}</TableCell>
-                        <TableCell className="font-medium">{record.studentName}</TableCell>
-                        <TableCell>{record.rollNumber}</TableCell>
-                        <TableCell>{record.department.split('_')[0]} {record.year}</TableCell>
-                        <TableCell>{record.subject}</TableCell>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-muted-foreground">Loading...</TableCell>
+                    </TableRow>
+                  ) : logs.length > 0 ? (
+                    logs.map((log) => (
+                      <TableRow key={log.id}>
+                        <TableCell className="font-medium">{log.student.first_name} {log.student.last_name}</TableCell>
+                        <TableCell>{log.student.roll_number}</TableCell>
+                        <TableCell>
+                          <div>{log.course.name}</div>
+                          <div className="text-xs text-muted-foreground">{log.course.code}</div>
+                        </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant={record.status === 'Present' ? 'default' : 'destructive'}>
-                            {record.status}
+                          <Badge variant={log.status === 'Present' ? 'default' : 'destructive'}>
+                            {log.status}
                           </Badge>
                         </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground">
-                        No attendance records found for the selected filters.
+                      <TableCell colSpan={4} className="text-center text-muted-foreground">
+                        No records found for this date.
                       </TableCell>
                     </TableRow>
                   )}

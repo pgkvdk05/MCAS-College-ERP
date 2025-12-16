@@ -6,6 +6,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AddTeacher from "./pages/erp/AddTeacher";
 import AddStudent from "./pages/erp/AddStudent";
+import CreateAdmin from "./pages/dev/CreateAdmin";
 import ManageUsers from "./pages/erp/ManageUsers";
 import MarkAttendance from "./pages/erp/MarkAttendance";
 import ViewAttendance from "./pages/erp/ViewAttendance";
@@ -115,6 +116,10 @@ const App = () => {
             <Route path="/erp/od/request" element={<RequestOD />} />
             <Route path="/erp/chat/student" element={<StudentChat />} />
           </Route>
+
+
+          {/* Debug Route */}
+          <Route path="/dev/create-admin" element={<CreateAdmin />} />
 
           {/* Catch-all for 404 - MUST be the last route */}
           <Route path="*" element={<NotFound />} />

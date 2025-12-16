@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -15,20 +15,75 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
+import { useDepartments } from '@/hooks/useDepartments';
+import { useCourses } from '@/hooks/useCourses';
+import { supabase } from '@/integrations/supabase/client';
 
-const simulatedStudents = [
-  { id: 's1', rollNumber: 'CSE001', name: 'Alice Smith' },
-  { id: 's2', rollNumber: 'CSE002', name: 'Bob Johnson' },
-  { id: 's3', rollNumber: 'CSE003', name: 'Charlie Brown' },
-  { id: 's4', rollNumber: 'CSE004', name: 'Diana Prince' },
-];
+interface Student {
+  id: string;
+  roll_number: string;
+  first_name: string;
+  last_name: string;
+}
 
 const MarkAttendance: React.FC = () => {
+  const { departments } = useDepartments();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
+  const [selectedCourseId, setSelectedCourseId] = useState('');
+
+  // Fetch courses filtered by selected department
+  const { courses, refreshCourses } = useCourses(selectedDepartmentId);
+
+  const [students, setStudents] = useState<Student[]>([]);
   const [attendance, setAttendance] = useState<{ [key: string]: boolean }>({});
   const [absenceReasons, setAbsenceReasons] = useState<{ [key: string]: string }>({});
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (selectedDepartmentId) {
+      refreshCourses();
+      // Reset course selection when department changes as old course might not belong to new dept
+      setSelectedCourseId('');
+    }
+  }, [selectedDepartmentId, refreshCourses]);
+
+  useEffect(() => {
+    if (selectedDepartmentId && selectedYear) {
+      fetchStudents();
+    } else {
+      setStudents([]);
+    }
+  }, [selectedDepartmentId, selectedYear]);
+
+  const fetchStudents = async () => {
+    setLoadingStudents(true);
+    // Fetch profiles where role is STUDENT and department/year match
+    // Note: This relies on the 'profiles' table having these fields populated correctly.
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, roll_number, first_name, last_name')
+      .eq('role', 'STUDENT')
+      .eq('department_id', selectedDepartmentId)
+      .eq('year', selectedYear)
+      .order('roll_number');
+
+    if (error) {
+      console.error('Error fetching students:', error);
+      toast.error('Failed to load students.');
+    } else {
+      setStudents(data as Student[]);
+      // Initialize attendance to true (Present) by default for ease of use
+      const initialAttendance: { [key: string]: boolean } = {};
+      data.forEach(student => {
+        initialAttendance[student.id] = true;
+      });
+      setAttendance(initialAttendance);
+    }
+    setLoadingStudents(false);
+  };
 
   const handleAttendanceChange = (studentId: string, isChecked: boolean) => {
     setAttendance((prev) => ({ ...prev, [studentId]: isChecked }));
@@ -45,44 +100,57 @@ const MarkAttendance: React.FC = () => {
     setAbsenceReasons((prev) => ({ ...prev, [studentId]: reason }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDate || !selectedDepartment || !selectedYear) {
-      toast.error('Please select date, department, and year.');
+    if (!selectedDate || !selectedDepartmentId || !selectedYear || !selectedCourseId) {
+      toast.error('Please select date, department, year, and course.');
       return;
     }
 
-    const attendanceRecords = simulatedStudents.map(student => ({
-      studentId: student.id,
-      rollNumber: student.rollNumber,
-      name: student.name,
+    if (students.length === 0) {
+      toast.error('No students found to mark attendance for.');
+      return;
+    }
+
+    setSubmitting(true);
+    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+
+    const attendanceRecords = students.map(student => ({
+      student_id: student.id,
+      course_id: selectedCourseId,
+      date: formattedDate,
       status: attendance[student.id] ? 'Present' : 'Absent',
-      reason: attendance[student.id] ? undefined : absenceReasons[student.id] || undefined,
+      reason: attendance[student.id] ? null : absenceReasons[student.id] || null,
     }));
 
-    console.log('Attendance Data:', {
-      date: selectedDate.toISOString().split('T')[0],
-      department: selectedDepartment,
-      year: selectedYear,
-      records: attendanceRecords,
-    });
-    toast.success('Attendance marked successfully!', {
-      description: `Date: ${format(selectedDate, 'PPP')}, Class: ${selectedDepartment}-${selectedYear}`,
-    });
+    // Upsert attendance records (update if exists for same student+course+date)
+    const { error } = await supabase
+      .from('attendance')
+      .upsert(attendanceRecords, { onConflict: 'student_id, course_id, date' });
+
+    if (error) {
+      console.error('Error submitting attendance:', error);
+      toast.error('Failed to submit attendance.', { description: error.message });
+    } else {
+      toast.success('Attendance marked successfully!', {
+        description: `Date: ${format(selectedDate, 'PPP')}, Students: ${students.length}`,
+      });
+    }
+    setSubmitting(false);
   };
 
   return (
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Mark Attendance</h2>
-        <Card className="max-w-3xl mx-auto">
+        <Card className="max-w-4xl mx-auto">
           <CardHeader>
             <CardTitle>Mark Daily Attendance</CardTitle>
             <CardDescription>Select the class and mark attendance for students.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <Label htmlFor="date">Date</Label>
                   <Popover>
@@ -110,16 +178,14 @@ const MarkAttendance: React.FC = () => {
                 </div>
                 <div>
                   <Label htmlFor="department">Department</Label>
-                  <Select onValueChange={setSelectedDepartment} value={selectedDepartment} required>
+                  <Select onValueChange={setSelectedDepartmentId} value={selectedDepartmentId} required>
                     <SelectTrigger id="department">
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Commerce_BCom">Commerce (B.Com)</SelectItem>
-                      <SelectItem value="Commerce_BComCA">Commerce (B.Com CA)</SelectItem>
-                      <SelectItem value="CS_BScCS">Computer Science (B.Sc CS)</SelectItem>
-                      <SelectItem value="CS_BCA">Computer Science (BCA)</SelectItem>
-                      <SelectItem value="English_BA">English (B.A English)</SelectItem>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -136,52 +202,73 @@ const MarkAttendance: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Label htmlFor="course">Course</Label>
+                  <Select onValueChange={setSelectedCourseId} value={selectedCourseId} required disabled={!selectedDepartmentId}>
+                    <SelectTrigger id="course">
+                      <SelectValue placeholder={!selectedDepartmentId ? "Select Dept First" : "Select Course"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {courses.map((course) => (
+                        <SelectItem key={course.id} value={course.id}>{course.name} ({course.code})</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              {selectedDepartment && selectedYear && (
+              {selectedDepartmentId && selectedYear && (
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-3">Students in {selectedDepartment}-{selectedYear}</h3>
-                  <div className="overflow-x-auto border rounded-md">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Roll Number</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead className="text-center">Present</TableHead>
-                          <TableHead>Reason (if absent)</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {simulatedStudents.map((student) => (
-                          <TableRow key={student.id}>
-                            <TableCell>{student.rollNumber}</TableCell>
-                            <TableCell>{student.name}</TableCell>
-                            <TableCell className="text-center">
-                              <Checkbox
-                                checked={attendance[student.id] || false}
-                                onCheckedChange={(checked) => handleAttendanceChange(student.id, !!checked)}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              {!attendance[student.id] && (
-                                <Input
-                                  type="text"
-                                  placeholder="Reason for absence (optional)"
-                                  value={absenceReasons[student.id] || ''}
-                                  onChange={(e) => handleReasonChange(student.id, e.target.value)}
-                                  className="w-full"
-                                />
-                              )}
-                            </TableCell>
+                  <h3 className="text-lg font-semibold mb-3">Students List</h3>
+                  {loadingStudents ? (
+                    <div className="text-muted-foreground text-center py-4">Loading students...</div>
+                  ) : students.length > 0 ? (
+                    <div className="overflow-x-auto border rounded-md">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Roll Number</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead className="text-center">Present</TableHead>
+                            <TableHead>Reason (if absent)</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                        </TableHeader>
+                        <TableBody>
+                          {students.map((student) => (
+                            <TableRow key={student.id}>
+                              <TableCell>{student.roll_number}</TableCell>
+                              <TableCell>{student.first_name} {student.last_name}</TableCell>
+                              <TableCell className="text-center">
+                                <Checkbox
+                                  checked={attendance[student.id] || false}
+                                  onCheckedChange={(checked) => handleAttendanceChange(student.id, !!checked)}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                {!attendance[student.id] && (
+                                  <Input
+                                    type="text"
+                                    placeholder="Reason for absence"
+                                    value={absenceReasons[student.id] || ''}
+                                    onChange={(e) => handleReasonChange(student.id, e.target.value)}
+                                    className="w-full"
+                                  />
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground text-center py-4">No students found matching filters.</div>
+                  )}
                 </div>
               )}
 
-              <Button type="submit" className="w-full">Submit Attendance</Button>
+              <Button type="submit" className="w-full" disabled={submitting || students.length === 0}>
+                {submitting ? 'Submitting...' : 'Submit Attendance'}
+              </Button>
             </form>
           </CardContent>
         </Card>

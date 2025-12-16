@@ -34,10 +34,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="bg-primary text-primary-foreground p-4 flex justify-between items-center shadow-md">
-        <div className="flex items-center space-x-3">
-          <img src="/cllogo.png" alt="College Logo" className="h-8" />
-          <div className="font-bold text-lg">Mangalam College of Arts and Science ERP</div>
-        </div>
+        <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+          <img src="/collogo.png" alt="College Logo" className="h-8" />
+          <div className="font-bold text-lg">Mangalam College of Arts and Science</div>
+        </Link>
         <nav className="flex items-center space-x-4">
           {userRole && (
             <span className="text-sm">Role: {userRole.replace('_', ' ')}</span>
@@ -58,7 +58,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       </div>
 
       <footer className="text-center text-sm text-muted-foreground p-4 border-t border-border">
-        &copy; 2025 Mangalam College of Arts and Science ERP
+        &copy; 2025 Mangalam College of Arts and Science
       </footer>
     </div>
   );
