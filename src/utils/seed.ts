@@ -2,7 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const seedUsers = async () => {
     const users = [
-        { email: 'superadmin@college.com', password: 'password123', role: 'SUPER_ADMIN', data: { first_name: 'Super', last_name: 'Admin' } },
+        { email: 'superadmin@mcas.clg.com', password: 'mcas@TMV24', role: 'SUPER_ADMIN', data: { first_name: 'Super', last_name: 'Admin' } },
         { email: 'admin@college.com', password: 'password123', role: 'ADMIN', data: { first_name: 'Admin', last_name: 'User' } },
         { email: 'teacher@college.com', password: 'password123', role: 'TEACHER', data: { first_name: 'Teacher', last_name: 'User', employee_id: 'EMP001' } },
         { email: 'student@college.com', password: 'password123', role: 'STUDENT', data: { first_name: 'Student', last_name: 'User', roll_number: 'STD001' } },
