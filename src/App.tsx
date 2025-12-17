@@ -70,10 +70,10 @@ const App = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
-          <Route path="/auth/super-admin" element={<AuthPage role="SUPER_ADMIN" defaultUsername="superadmin" />} />
-          <Route path="/auth/admin" element={<AuthPage role="ADMIN" defaultUsername="admin" />} />
-          <Route path="/auth/teacher" element={<AuthPage role="TEACHER" defaultUsername="teacher" />} />
-          <Route path="/auth/student" element={<AuthPage role="STUDENT" defaultUsername="student" />} />
+          <Route path="/auth/super-admin" element={<AuthPage role="SUPER_ADMIN" />} />
+          <Route path="/auth/admin" element={<AuthPage role="ADMIN" />} />
+          <Route path="/auth/teacher" element={<AuthPage role="TEACHER" />} />
+          <Route path="/auth/student" element={<AuthPage role="STUDENT" />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']} />}>

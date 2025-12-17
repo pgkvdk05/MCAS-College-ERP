@@ -12,10 +12,9 @@ import { supabase } from '@/integrations/supabase/client'; // Import supabase cl
 
 interface AuthPageProps {
   role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT';
-  defaultUsername: string; // This will now be used as a hint for email
 }
 
-const AuthPage: React.FC<AuthPageProps> = ({ role, defaultUsername }) => {
+const AuthPage: React.FC<AuthPageProps> = ({ role }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -68,7 +67,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ role, defaultUsername }) => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder={`${defaultUsername}@college.com`}
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -79,7 +78,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ role, defaultUsername }) => {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="password"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
