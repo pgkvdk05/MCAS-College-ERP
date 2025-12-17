@@ -31,6 +31,7 @@ import { useSession } from "./components/auth/SessionContextProvider";
 import { useEffect } from "react";
 import ProtectedRoute from "./components/auth/ProtectedRoute"; // Import ProtectedRoute
 import SeedPage from "./pages/dev/SeedPage"; // Import SeedPage
+import { Analytics } from "@vercel/analytics/react"; // Import Vercel Analytics
 
 const queryClient = new QueryClient();
 
@@ -126,6 +127,7 @@ const App = () => {
           {/* Catch-all for 404 - MUST be the last route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <Analytics /> {/* Add the Analytics component here */}
       </TooltipProvider>
     </QueryClientProvider>
   );
