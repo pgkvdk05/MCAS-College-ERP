@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea'; // Import Textarea for address
 import { toast } from 'sonner';
 import { createTemporaryClient } from '@/utils/auth-helpers';
 import { useDepartments } from '@/hooks/useDepartments';
@@ -22,6 +23,11 @@ const AddStudent: React.FC = () => {
     rollNumber: '',
     departmentId: '',
     year: '',
+    address: '', // New field
+    tenthSchoolName: '', // New field
+    tenthMarkScore: '', // New field
+    twelfthSchoolName: '', // New field
+    twelfthMarkScore: '', // New field
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -39,8 +45,8 @@ const AddStudent: React.FC = () => {
 
     try {
       // 1. Validate inputs
-      if (!formData.email || !formData.password || !formData.departmentId || !formData.rollNumber) {
-        toast.error('Please fill in all required fields.');
+      if (!formData.email || !formData.password || !formData.departmentId || !formData.rollNumber || !formData.firstName || !formData.lastName) {
+        toast.error('Please fill in all required fields (First Name, Last Name, Email, Password, Roll Number, Department).');
         setLoading(false);
         return;
       }
@@ -63,43 +69,24 @@ const AddStudent: React.FC = () => {
       if (authError) throw authError;
 
       if (authData.user) {
-        // 3. Update the profile with specific student details (roll_number, year, department_id)
-        // Note: The trigger might have created the profile already with basic metadata.
-        // We need to update it with the specific fields.
-
-        // We generally need to use the admin client (or the signed-in user if they have permission) to update.
-        // Since we are currently the Admin, we can use the MAIN 'supabase' client or just rely on the trigger.
-        // BUT, the trigger only maps metadata provided in signUp.
-        // 'roll_number', 'year', 'department_id' are NOT in the standard metadata mapping in the trigger I saw earlier?
-        // Let's re-check the trigger function in 0016_create_profiles...
-        // It maps: email, username, role, first_name, last_name.
-        // It DOES NOT map roll_number, department_id, year.
-
-        // So we must update the profile manually after creation.
-        // HOWEVER, RLS says "Users can update their own profile". 
-        // The Admin CANNOT update another user's profile unless there is an RLS policy for it.
-        // I need to check if Admin has RLS permission to update profiles.
-        // If not, I need to add that policy or use a service role key (which I don't have easily in client).
-        // OR, I can pass all these fields in `options.data` and UPDATE THE TRIGGER to handle them.
-
-        // Let's TRY to update using the tempClient (which is logged in as the new user momentarily? NO, persistSession: false).
-        // Wait, signUp with autoConfirm: false (default) returns a fake session or no session if email confirm is on.
-        // If email confirm is OFF, it returns a session.
-        // If I use tempClient, I have the session of the NEW user!
-        // So I CAN update the profile using `tempClient` immediately after signUp!
-
+        // 3. Update the profile with specific student details
         const { error: updateError } = await tempClient
           .from('profiles')
           .update({
             roll_number: formData.rollNumber,
             department_id: formData.departmentId,
-            year: formData.year
+            year: formData.year,
+            address: formData.address || null, // New field
+            tenth_school_name: formData.tenthSchoolName || null, // New field
+            tenth_mark_score: formData.tenthMarkScore ? parseInt(formData.tenthMarkScore) : null, // New field
+            twelfth_school_name: formData.twelfthSchoolName || null, // New field
+            twelfth_mark_score: formData.twelfthMarkScore ? parseInt(formData.twelfthMarkScore) : null, // New field
           })
           .eq('id', authData.user.id);
 
         if (updateError) {
           console.error('Error updating profile details:', updateError);
-          toast.warning('User created, but failed to save some profile details. Please update manually.');
+          toast.warning('Student user created, but failed to save some profile details. Please update manually.', { description: updateError.message });
         } else {
           toast.success('Student added successfully!');
           // Reset form
@@ -111,6 +98,11 @@ const AddStudent: React.FC = () => {
             rollNumber: '',
             departmentId: '',
             year: '',
+            address: '',
+            tenthSchoolName: '',
+            tenthMarkScore: '',
+            twelfthSchoolName: '',
+            twelfthMarkScore: '',
           });
         }
       }
@@ -129,7 +121,7 @@ const AddStudent: React.FC = () => {
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle>Student Details</CardTitle>
-            <CardDescription>Create a new student account.</CardDescription>
+            <CardDescription>Create a new student account with comprehensive details.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -168,11 +160,15 @@ const AddStudent: React.FC = () => {
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
-                      {departments.map((dept) => (
-                        <SelectItem key={dept.id} value={dept.id}>
-                          {dept.name} ({dept.code})
-                        </SelectItem>
-                      ))}
+                      {loadingDepts ? (
+                        <SelectItem value="loading" disabled>Loading Departments...</SelectItem>
+                      ) : (
+                        departments.map((dept) => (
+                          <SelectItem key={dept.id} value={dept.id}>
+                            {dept.name} ({dept.code})
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -190,8 +186,42 @@ const AddStudent: React.FC = () => {
                   </Select>
                 </div>
               </div>
+
+              {/* New Fields */}
+              <div>
+                <Label htmlFor="address">Address</Label>
+                <Textarea
+                  id="address"
+                  placeholder="Enter student's full address"
+                  value={formData.address}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="tenthSchoolName">10th School Name</Label>
+                  <Input id="tenthSchoolName" value={formData.tenthSchoolName} onChange={handleChange} />
+                </div>
+                <div>
+                  <Label htmlFor="tenthMarkScore">10th Mark Score (out of 100)</Label>
+                  <Input id="tenthMarkScore" type="number" min="0" max="100" value={formData.tenthMarkScore} onChange={handleChange} />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="twelfthSchoolName">12th School Name</Label>
+                  <Input id="twelfthSchoolName" value={formData.twelfthSchoolName} onChange={handleChange} />
+                </div>
+                <div>
+                  <Label htmlFor="twelfthMarkScore">12th Mark Score (out of 100)</Label>
+                  <Input id="twelfthMarkScore" type="number" min="0" max="100" value={formData.twelfthMarkScore} onChange={handleChange} />
+                </div>
+              </div>
+
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Adding...' : 'Add Student'}
+                {loading ? 'Adding Student...' : 'Add Student'}
               </Button>
             </form>
           </CardContent>
