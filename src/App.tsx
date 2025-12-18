@@ -6,7 +6,6 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AddTeacher from "./pages/erp/AddTeacher";
 import AddStudent from "./pages/erp/AddStudent";
-import CreateAdmin from "./pages/dev/CreateAdmin";
 import ManageUsers from "./pages/erp/ManageUsers";
 import MarkAttendance from "./pages/erp/MarkAttendance";
 import ViewAttendance from "./pages/erp/ViewAttendance";
@@ -29,9 +28,8 @@ import DashboardPage from "./components/layout/DashboardPage";
 import ProfilePage from "./pages/erp/ProfilePage";
 import { useSession } from "./components/auth/SessionContextProvider";
 import { useEffect } from "react";
-import ProtectedRoute from "./components/auth/ProtectedRoute"; // Import ProtectedRoute
-import { Analytics } from "@vercel/analytics/react"; // Import Vercel Analytics
-import SeedPage from "./pages/dev/SeedPage"; // Import SeedPage
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { Analytics } from "@vercel/analytics/react";
 
 const queryClient = new QueryClient();
 
@@ -41,17 +39,14 @@ const App = () => {
 
   useEffect(() => {
     if (!loading && user && userRole) {
-      // If user is logged in and role is determined, ensure they are on the correct dashboard
       const expectedDashboardPath = `/dashboard/${userRole.toLowerCase().replace('_', '-')}`;
       if (location.pathname === '/' || location.pathname.startsWith('/auth/')) {
         navigate(expectedDashboardPath, { replace: true });
       } else if (!location.pathname.startsWith('/dashboard/') && !location.pathname.startsWith('/profile/') && !location.pathname.startsWith('/erp/')) {
-        // If logged in and on an unexpected non-auth/non-dashboard route, redirect to their dashboard
         navigate(expectedDashboardPath, { replace: true });
       }
     } else if (!loading && !user) {
       // If not logged in, and trying to access a protected route, ProtectedRoute will handle redirection to '/'
-      // If on '/', '/auth/*', or NotFound, no redirection needed here.
     }
   }, [user, userRole, loading, navigate]);
 
@@ -84,24 +79,21 @@ const App = () => {
             <Route path="/erp/manage-users" element={<ManageUsers />} />
             <Route path="/erp/manage-departments" element={<ManageDepartments />} />
             <Route path="/erp/manage-courses" element={<ManageCourses />} />
-            {/* Super Admin can also access Admin/Teacher routes for management, if needed, but for now, strict roles */}
-            <Route path="/erp/fees/admin" element={<AdminFees />} /> {/* Admin/Super Admin */}
-            <Route path="/erp/od/approve" element={<ApproveODRequests />} /> {/* Teacher/Admin/Super Admin */}
-            <Route path="/erp/attendance/all" element={<ViewAllAttendance />} /> {/* Admin/Super Admin */}
-            <Route path="/erp/marks/all" element={<ViewAllMarks />} /> {/* Admin/Super Admin */}
+            <Route path="/erp/fees/admin" element={<AdminFees />} />
+            <Route path="/erp/od/approve" element={<ApproveODRequests />} />
+            <Route path="/erp/attendance/all" element={<ViewAllAttendance />} />
+            <Route path="/erp/marks/all" element={<ViewAllMarks />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']} />}>
             <Route path="/dashboard/admin" element={<DashboardPage userRole="ADMIN" />} />
             <Route path="/profile/admin" element={<ProfilePage userRole="ADMIN" />} />
-            {/* Admin specific routes, some overlap with Super Admin */}
-            <Route path="/erp/attendance/mark" element={<MarkAttendance />} /> {/* Teacher/Admin */}
+            <Route path="/erp/attendance/mark" element={<MarkAttendance />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['TEACHER', 'ADMIN', 'SUPER_ADMIN']} />}>
             <Route path="/dashboard/teacher" element={<DashboardPage userRole="TEACHER" />} />
             <Route path="/profile/teacher" element={<ProfilePage userRole="TEACHER" />} />
-            {/* Teacher specific routes */}
             <Route path="/erp/marks/upload" element={<UploadMarks />} />
             <Route path="/erp/teacher/classes" element={<ViewMyClasses />} />
             <Route path="/erp/teacher/student-profiles" element={<ViewStudentProfiles />} />
@@ -111,7 +103,6 @@ const App = () => {
           <Route element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER', 'ADMIN', 'SUPER_ADMIN']} />}>
             <Route path="/dashboard/student" element={<DashboardPage userRole="STUDENT" />} />
             <Route path="/profile/student" element={<ProfilePage userRole="STUDENT" />} />
-            {/* Student specific routes */}
             <Route path="/erp/attendance/student" element={<ViewAttendance />} />
             <Route path="/erp/marks/student" element={<ViewMarks />} />
             <Route path="/erp/fees/student" element={<StudentFees />} />
@@ -119,15 +110,10 @@ const App = () => {
             <Route path="/erp/chat/student" element={<StudentChat />} />
           </Route>
 
-
-          {/* Debug Routes */}
-          <Route path="/dev/create-admin" element={<CreateAdmin />} />
-          <Route path="/dev/seed-users" element={<SeedPage />} /> {/* New route for SeedPage */}
-
           {/* Catch-all for 404 - MUST be the last route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <Analytics /> {/* Add the Analytics component here */}
+        <Analytics />
       </TooltipProvider>
     </QueryClientProvider>
   );

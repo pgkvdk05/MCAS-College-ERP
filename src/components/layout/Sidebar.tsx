@@ -10,10 +10,9 @@ import {
   ClipboardList, DollarSign, Building2, BookOpen,
   MessageSquareText, CalendarCheck, FileText, User
 } from 'lucide-react';
-import { useSession } from '@/components/auth/SessionContextProvider'; // Import useSession
+import { useSession } from '@/components/auth/SessionContextProvider';
 
 interface SidebarProps {
-  // userRole prop is now optional as it will be primarily sourced from context
   userRole?: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null;
 }
 
@@ -63,10 +62,10 @@ const navigationItems = {
 
 const Sidebar: React.FC<SidebarProps> = () => {
   const location = useLocation();
-  const { userRole, loading } = useSession(); // Get userRole from session context
+  const { userRole, loading } = useSession();
 
   if (loading || !userRole || !navigationItems[userRole]) {
-    return null; // No sidebar if loading, no role, or role not recognized
+    return null;
   }
 
   const items = navigationItems[userRole];

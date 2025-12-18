@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea'; // Import Textarea for address
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { createTemporaryClient } from '@/utils/auth-helpers';
 import { useDepartments } from '@/hooks/useDepartments';
@@ -23,11 +23,11 @@ const AddStudent: React.FC = () => {
     rollNumber: '',
     departmentId: '',
     year: '',
-    address: '', // New field
-    tenthSchoolName: '', // New field
-    tenthMarkScore: '', // New field
-    twelfthSchoolName: '', // New field
-    twelfthMarkScore: '', // New field
+    address: '',
+    tenthSchoolName: '',
+    tenthMarkScore: '',
+    twelfthSchoolName: '',
+    twelfthMarkScore: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -61,7 +61,7 @@ const AddStudent: React.FC = () => {
             role: 'STUDENT',
             first_name: formData.firstName,
             last_name: formData.lastName,
-            username: formData.rollNumber, // Use roll number as username for students initially
+            username: formData.rollNumber,
           },
         },
       });
@@ -76,11 +76,11 @@ const AddStudent: React.FC = () => {
             roll_number: formData.rollNumber,
             department_id: formData.departmentId,
             year: formData.year,
-            address: formData.address || null, // New field
-            tenth_school_name: formData.tenthSchoolName || null, // New field
-            tenth_mark_score: formData.tenthMarkScore ? parseInt(formData.tenthMarkScore) : null, // New field
-            twelfth_school_name: formData.twelfthSchoolName || null, // New field
-            twelfth_mark_score: formData.twelfthMarkScore ? parseInt(formData.twelfthMarkScore) : null, // New field
+            address: formData.address || null,
+            tenth_school_name: formData.tenthSchoolName || null,
+            tenth_mark_score: formData.tenthMarkScore ? parseInt(formData.tenthMarkScore) : null,
+            twelfth_school_name: formData.twelfthSchoolName || null,
+            twelfth_mark_score: formData.twelfthMarkScore ? parseInt(formData.twelfthMarkScore) : null,
           })
           .eq('id', authData.user.id);
 

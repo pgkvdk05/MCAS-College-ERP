@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 
 // Create a separate client for creating users to avoid signing out the admin
@@ -13,7 +12,7 @@ export const createTemporaryClient = () => {
 
     return createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
-            persistSession: false, // CRITICAL: Do not persist this session
+            persistSession: false,
             autoRefreshToken: false,
             detectSessionInUrl: false,
         },

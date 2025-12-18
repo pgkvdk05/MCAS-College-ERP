@@ -26,7 +26,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
 
   if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
     // Authenticated but unauthorized role, redirect to their dashboard or a generic unauthorized page
-    // For now, redirect to their determined dashboard, or home if role is unexpected
     const redirectPath = userRole ? `/dashboard/${userRole.toLowerCase().replace('_', '-')}` : '/';
     return <Navigate to={redirectPath} replace />;
   }

@@ -86,7 +86,7 @@ const ManageUsers: React.FC = () => {
       }
 
       toast.success(`User '${userName}' deleted successfully.`, { id: loadingToastId });
-      fetchUsers(); // Re-fetch to update the list
+      fetchUsers();
     } catch (error: any) {
       console.error('Error deleting user:', error);
       toast.error('Failed to delete user.', { id: loadingToastId, description: error.message });
@@ -134,7 +134,7 @@ const ManageUsers: React.FC = () => {
                     <TableHead>Name</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Email</TableHead>
-                    <TableHead>Identifier</TableHead> {/* Roll No / Employee ID */}
+                    <TableHead>Identifier</TableHead>
                     <TableHead>Department</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>

@@ -3,24 +3,23 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { useSession } from '@/components/auth/SessionContextProvider'; // Import useSession
-import { supabase } from '@/integrations/supabase/client'; // Import supabase client
-import { Button } from '@/components/ui/button'; // Import Button component
+import { useSession } from '@/components/auth/SessionContextProvider';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
 
 interface MainLayoutProps {
   children: React.ReactNode;
-  userRole?: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null; // Keep for explicit overrides if needed, but prefer context
+  userRole?: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const { user, userRole, loading } = useSession(); // Get session data from context
+  const { user, userRole, loading } = useSession();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     // Redirection handled by SessionContextProvider's onAuthStateChange
   };
 
-  // If loading, don't render layout content yet
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
@@ -29,7 +28,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     );
   }
 
-  const showSidebar = userRole !== null; // Show sidebar if a role is determined
+  const showSidebar = userRole !== null;
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -42,7 +41,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           {userRole && (
             <span className="text-sm">Role: {userRole.replace('_', ' ')}</span>
           )}
-          {user && ( // Show logout only if a user is logged in
+          {user && (
             <Button variant="ghost" onClick={handleLogout} className="text-sm hover:underline text-primary-foreground">
               Logout
             </Button>
@@ -51,7 +50,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       </header>
 
       <div className="flex flex-grow">
-        {showSidebar && <Sidebar userRole={userRole} />} {/* Pass userRole from context */}
+        {showSidebar && <Sidebar userRole={userRole} />}
         <main className="flex-grow container mx-auto p-6">
           {children}
         </main>

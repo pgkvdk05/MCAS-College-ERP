@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client'; // Import Supabase client
+import { supabase } from '@/integrations/supabase/client';
 
 interface Department {
   id: string;
@@ -64,7 +64,7 @@ const ManageDepartments: React.FC = () => {
       toast.success(`Department '${newDepartmentName}' added successfully.`);
       setNewDepartmentName('');
       setNewDepartmentCode('');
-      fetchDepartments(); // Re-fetch to update the list
+      fetchDepartments();
     }
     setIsSubmitting(false);
   };
@@ -84,7 +84,7 @@ const ManageDepartments: React.FC = () => {
       toast.error('Failed to delete department.', { description: error.message });
     } else {
       toast.info(`Department '${name}' deleted.`);
-      fetchDepartments(); // Re-fetch to update the list
+      fetchDepartments();
     }
   };
 

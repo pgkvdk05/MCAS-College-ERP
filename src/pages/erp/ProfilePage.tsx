@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { showError } from '@/utils/toast';
 
 interface ProfilePageProps {
-  userRole: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT'; // Still used for initial routing, but data fetched dynamically
+  userRole: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT';
 }
 
 interface UserProfile {
@@ -23,7 +23,7 @@ interface UserProfile {
   role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null;
   employee_id: string | null;
   roll_number: string | null;
-  department_id: string | null; // UUID for department
+  department_id: string | null;
   year: string | null;
   designation: string | null;
   avatar_url: string | null;

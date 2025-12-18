@@ -56,7 +56,7 @@ const AddTeacher: React.FC = () => {
             role: 'TEACHER',
             first_name: formData.firstName,
             last_name: formData.lastName,
-            username: formData.username || formData.employeeCode, // Default username to employee code if not provided
+            username: formData.username || formData.employeeCode,
           },
         },
       });

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client'; // Import supabase client
+import { supabase } from '@/integrations/supabase/client';
 
 interface AuthPageProps {
   role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT';
@@ -39,7 +39,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ role }) => {
   const handleGoogleLogin = async () => {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google', // This line correctly specifies the Google provider
+      provider: 'google',
       options: {
         redirectTo: window.location.origin,
       }

@@ -9,10 +9,10 @@ import {
   Users, BookUser, GraduationCap, Building2, BookOpen, DollarSign, CalendarCheck,
   ClipboardList, FileText, MessageSquareText, LayoutDashboard, User
 } from 'lucide-react';
-import { useSession } from '@/components/auth/SessionContextProvider'; // Import useSession
+import { useSession } from '@/components/auth/SessionContextProvider';
 
 interface DashboardPageProps {
-  userRole: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT'; // Still used for specific dashboard content logic
+  userRole: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT';
 }
 
 // Define dashboard content for each role
@@ -151,7 +151,7 @@ const dashboardConfig = {
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ userRole: propUserRole }) => {
   const { userRole: contextUserRole, loading } = useSession();
-  const currentRole = contextUserRole || propUserRole; // Prioritize context role
+  const currentRole = contextUserRole || propUserRole;
 
   if (loading) {
     return (
