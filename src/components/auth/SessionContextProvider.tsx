@@ -23,12 +23,15 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('SessionContextProvider: useEffect triggered');
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
+        console.log('onAuthStateChange event:', event, 'session:', currentSession);
         setSession(currentSession);
         setUser(currentSession?.user || null);
 
         if (currentSession?.user) {
+          console.log('User found in session, fetching profile...');
           // Fetch user role from profiles table
           const { data: profile, error } = await supabase
             .from('profiles')
@@ -40,10 +43,15 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
             console.error('Error fetching user profile:', error);
             showError('Failed to load user role.');
             setUserRole(null);
+            setLoading(false); // Ensure loading is set to false even on profile fetch error
           } else if (profile) {
+            console.log('Profile fetched, role:', profile.role);
             setUserRole(profile.role as 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT');
+            setLoading(false); // Set loading to false after successful profile fetch
           } else {
+            console.log('No profile found for user.');
             setUserRole(null); // No profile found
+            setLoading(false); // Set loading to false if no profile
           }
 
           if (event === 'SIGNED_IN') {
@@ -56,43 +64,51 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
             }
           }
         } else {
+          console.log('No user in session, signing out or initial state.');
           setUserRole(null);
           if (event === 'SIGNED_OUT') {
             showSuccess('Logged out successfully!');
             navigate('/'); // Redirect to home/login selection on sign out
           }
+          setLoading(false); // Set loading to false if no user
         }
-        setLoading(false);
       }
     );
 
     // Initial session check
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+    console.log('Performing initial session check...');
+    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
+      console.log('Initial session check result:', initialSession);
       setSession(initialSession);
       setUser(initialSession?.user || null);
       if (initialSession?.user) {
-        supabase
+        console.log('Initial session has user, fetching profile...');
+        const { data: profile, error } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', initialSession.user.id)
-          .single()
-          .then(({ data: profile, error }) => {
-            if (error) {
-              console.error('Error fetching initial user profile:', error);
-              setUserRole(null);
-            } else if (profile) {
-              setUserRole(profile.role as 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT');
-            } else {
-              setUserRole(null);
-            }
-            setLoading(false);
-          });
+          .single();
+
+        if (error) {
+          console.error('Error fetching initial user profile:', error);
+          setUserRole(null);
+        } else if (profile) {
+          console.log('Initial profile fetched, role:', profile.role);
+          setUserRole(profile.role as 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT');
+        } else {
+          console.log('No initial profile found for user.');
+          setUserRole(null);
+        }
       } else {
-        setLoading(false);
+        console.log('No user in initial session.');
+        setUserRole(null);
       }
+      setLoading(false); // Always set loading to false after initial check
+      console.log('Initial session check completed, loading set to false.');
     });
 
     return () => {
+      console.log('SessionContextProvider: Cleaning up auth listener.');
       authListener.subscription.unsubscribe();
     };
   }, [navigate]);
