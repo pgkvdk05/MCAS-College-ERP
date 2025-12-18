@@ -31,6 +31,7 @@ import { useSession } from "./components/auth/SessionContextProvider";
 import { useEffect } from "react";
 import ProtectedRoute from "./components/auth/ProtectedRoute"; // Import ProtectedRoute
 import { Analytics } from "@vercel/analytics/react"; // Import Vercel Analytics
+import SeedPage from "./pages/dev/SeedPage"; // Import SeedPage
 
 const queryClient = new QueryClient();
 
@@ -121,6 +122,7 @@ const App = () => {
 
           {/* Debug Routes */}
           <Route path="/dev/create-admin" element={<CreateAdmin />} />
+          <Route path="/dev/seed-users" element={<SeedPage />} /> {/* New route for SeedPage */}
 
           {/* Catch-all for 404 - MUST be the last route */}
           <Route path="*" element={<NotFound />} />
