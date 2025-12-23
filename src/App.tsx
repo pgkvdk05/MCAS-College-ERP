@@ -26,6 +26,7 @@ import RequestOD from "./pages/erp/RequestOD";
 import AuthPage from "./components/auth/AuthPage";
 import DashboardPage from "./components/layout/DashboardPage";
 import ProfilePage from "./pages/erp/ProfilePage";
+import EditUser from "./pages/erp/EditUser"; // Import the new component
 import { useSession } from "./components/auth/SessionContextProvider";
 import { useEffect } from "react";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -77,6 +78,7 @@ const App = () => {
             <Route path="/erp/add-teacher" element={<AddTeacher />} />
             <Route path="/erp/add-student" element={<AddStudent />} />
             <Route path="/erp/manage-users" element={<ManageUsers />} />
+            <Route path="/erp/edit-user/:userId" element={<EditUser />} /> {/* New EditUser route */}
             <Route path="/erp/manage-departments" element={<ManageDepartments />} />
             <Route path="/erp/manage-courses" element={<ManageCourses />} />
             <Route path="/erp/fees/admin" element={<AdminFees />} />

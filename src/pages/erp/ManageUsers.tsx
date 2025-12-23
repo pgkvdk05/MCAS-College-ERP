@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/auth/SessionContextProvider';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface UserProfile {
   id: string;
@@ -32,6 +32,7 @@ const ManageUsers: React.FC = () => {
   const { userRole: contextUserRole, loading: sessionLoading } = useSession();
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!sessionLoading) {
@@ -94,10 +95,7 @@ const ManageUsers: React.FC = () => {
   };
 
   const handleEdit = (userId: string) => {
-    console.log(`Editing user: ${userId}`);
-    toast.info(`Simulated edit for user ${userId}. A dedicated edit page would be implemented here.`);
-    // In a full implementation, this would navigate to an edit form:
-    // navigate(`/erp/edit-user/${userId}`);
+    navigate(`/erp/edit-user/${userId}`);
   };
 
   if (sessionLoading) {
