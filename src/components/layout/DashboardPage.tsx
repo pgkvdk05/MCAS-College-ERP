@@ -25,10 +25,10 @@ const dashboardConfig = {
         description: '',
         type: 'stats',
         items: [
-          { title: 'Total Users', value: '2,350', trend: '+180 this month', icon: Users },
-          { title: 'Active Departments', value: '5', trend: 'All active', icon: Building2 },
-          { title: 'Total Courses', value: '45', trend: '+5 new this semester', icon: BookOpen },
-          { title: 'Pending OD Requests', value: '7', trend: 'Requires immediate action', icon: CalendarCheck },
+          { title: 'Total Users', value: '2,350', trend: '+180 this month', icon: Users, href: '/erp/manage-users' },
+          { title: 'Active Departments', value: '5', trend: 'All active', icon: Building2, href: '/erp/manage-departments' },
+          { title: 'Total Courses', value: '45', trend: '+5 new this semester', icon: BookOpen, href: '/erp/manage-courses' },
+          { title: 'Pending OD Requests', value: '7', trend: 'Requires immediate action', icon: CalendarCheck, href: '/erp/od/approve' },
         ],
       },
       {
@@ -190,16 +190,18 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userRole: propUserRole })
                   {section.items.map((item, itemIndex) => {
                     const Icon = item.icon;
                     return (
-                      <Card key={itemIndex}>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                          <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
-                          {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
-                        </CardHeader>
-                        <CardContent>
-                          <div className="text-2xl font-bold">{item.value}</div>
-                          <p className="text-xs text-muted-foreground">{item.trend}</p>
-                        </CardContent>
-                      </Card>
+                      <Link to={item.href || '#'} key={itemIndex} className="block">
+                        <Card className="hover:border-primary hover:shadow-md transition-all cursor-pointer">
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
+                            {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
+                          </CardHeader>
+                          <CardContent>
+                            <div className="text-2xl font-bold">{item.value}</div>
+                            <p className="text-xs text-muted-foreground">{item.trend}</p>
+                          </CardContent>
+                        </Card>
+                      </Link>
                     );
                   })}
                 </div>
