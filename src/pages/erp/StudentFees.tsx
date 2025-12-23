@@ -1,29 +1,76 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useSession } from '@/components/auth/SessionContextProvider';
 
-const simulatedStudentFees = [
-  { id: 'fee1', type: 'Tuition Fee', amount: 15000, dueDate: '2025-01-15', status: 'Paid' },
-  { id: 'fee2', type: 'Exam Fee', amount: 1500, dueDate: '2025-02-01', status: 'Outstanding' },
-  { id: 'fee3', type: 'Library Fee', amount: 500, dueDate: '2025-01-30', status: 'Paid' },
-  { id: 'fee4', type: 'Hostel Fee', amount: 10000, dueDate: '2025-03-10', status: 'Outstanding' },
-];
+interface FeeRecord {
+  id: string;
+  fee_type: string;
+  amount: number;
+  due_date: string;
+  status: 'Paid' | 'Outstanding';
+  paid_at: string | null;
+}
 
 const StudentFees: React.FC = () => {
+  const { user, loading: sessionLoading } = useSession();
+  const [studentFees, setStudentFees] = useState<FeeRecord[]>([]);
+  const [loadingFees, setLoadingFees] = useState(true);
+
+  useEffect(() => {
+    const fetchFees = async () => {
+      if (sessionLoading || !user) {
+        setLoadingFees(false);
+        return;
+      }
+
+      setLoadingFees(true);
+      try {
+        const { data, error } = await supabase
+          .from('fees')
+          .select('*')
+          .eq('student_id', user.id)
+          .order('due_date', { ascending: true });
+
+        if (error) {
+          throw error;
+        }
+
+        setStudentFees(data as FeeRecord[]);
+      } catch (error: any) {
+        console.error('Error fetching student fees:', error);
+        toast.error('Failed to load your fee records.', { description: error.message });
+      } finally {
+        setLoadingFees(false);
+      }
+    };
+
+    fetchFees();
+  }, [user, sessionLoading]);
+
   const handlePayNow = (feeId: string, amount: number, type: string) => {
     console.log(`Simulating payment for fee ${feeId} (${type}) - Amount: ${amount}`);
     toast.info(`Simulating payment for ${type} of ₹${amount}. This would redirect to a payment gateway.`);
   };
 
-  const totalOutstanding = simulatedStudentFees
+  const totalOutstanding = studentFees
     .filter(fee => fee.status === 'Outstanding')
     .reduce((sum, fee) => sum + fee.amount, 0);
+
+  if (sessionLoading || loadingFees) {
+    return (
+      <MainLayout userRole="STUDENT">
+        <div className="text-center text-muted-foreground">Loading fees...</div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout userRole="STUDENT">
@@ -52,12 +99,12 @@ const StudentFees: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {simulatedStudentFees.length > 0 ? (
-                    simulatedStudentFees.map((fee) => (
+                  {studentFees.length > 0 ? (
+                    studentFees.map((fee) => (
                       <TableRow key={fee.id}>
-                        <TableCell className="font-medium">{fee.type}</TableCell>
+                        <TableCell className="font-medium">{fee.fee_type}</TableCell>
                         <TableCell className="text-right">₹{fee.amount.toLocaleString()}</TableCell>
-                        <TableCell>{fee.dueDate}</TableCell>
+                        <TableCell>{fee.due_date}</TableCell>
                         <TableCell className="text-center">
                           <Badge variant={fee.status === 'Paid' ? 'default' : 'destructive'}>
                             {fee.status}
@@ -65,7 +112,7 @@ const StudentFees: React.FC = () => {
                         </TableCell>
                         <TableCell className="text-right">
                           {fee.status === 'Outstanding' && (
-                            <Button size="sm" onClick={() => handlePayNow(fee.id, fee.amount, fee.type)}>
+                            <Button size="sm" onClick={() => handlePayNow(fee.id, fee.amount, fee.fee_type)}>
                               Pay Now
                             </Button>
                           )}

@@ -13,11 +13,15 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useSession } from '@/components/auth/SessionContextProvider';
 
 const RequestOD: React.FC = () => {
+  const { user, loading: sessionLoading } = useSession();
   const [reason, setReason] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [supportingDocument, setSupportingDocument] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -27,25 +31,69 @@ const RequestOD: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (sessionLoading || !user) {
+      toast.error('You must be logged in to submit an OD request.');
+      return;
+    }
     if (!reason.trim() || !selectedDate) {
       toast.error('Please provide a reason and select a date for your OD request.');
       return;
     }
 
-    console.log('OD Request Data:', {
-      reason,
-      date: selectedDate.toISOString().split('T')[0],
-      supportingDocument: supportingDocument ? supportingDocument.name : 'No document uploaded',
-    });
-    toast.success('OD Request Submitted!', {
-      description: `Your request for ${format(selectedDate, 'PPP')} has been sent for approval.`,
-    });
-    setReason('');
-    setSelectedDate(new Date());
-    setSupportingDocument(null);
+    setSubmitting(true);
+    let documentUrl: string | null = null;
+
+    try {
+      if (supportingDocument) {
+        const fileExtension = supportingDocument.name.split('.').pop();
+        const filePath = `${user.id}/${Date.now()}.${fileExtension}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('od_documents') // Assuming you have a Supabase Storage bucket named 'od_documents'
+          .upload(filePath, supportingDocument);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+        documentUrl = `${supabase.storage.from('od_documents').getPublicUrl(uploadData.path).data.publicUrl}`;
+      }
+
+      const { error: insertError } = await supabase
+        .from('od_requests')
+        .insert({
+          student_id: user.id,
+          reason: reason.trim(),
+          request_date: format(selectedDate, 'yyyy-MM-dd'),
+          status: 'Pending', // Default status
+          supporting_document_url: documentUrl,
+        });
+
+      if (insertError) {
+        throw insertError;
+      }
+
+      toast.success('OD Request Submitted!', {
+        description: `Your request for ${format(selectedDate, 'PPP')} has been sent for approval.`,
+      });
+      setReason('');
+      setSelectedDate(new Date());
+      setSupportingDocument(null);
+    } catch (error: any) {
+      console.error('Error submitting OD request:', error);
+      toast.error('Failed to submit OD request.', { description: error.message });
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  if (sessionLoading) {
+    return (
+      <MainLayout userRole="STUDENT">
+        <div className="text-center text-muted-foreground">Loading session...</div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout userRole="STUDENT">
@@ -66,6 +114,7 @@ const RequestOD: React.FC = () => {
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   required
+                  disabled={submitting}
                 />
               </div>
               <div>
@@ -78,6 +127,7 @@ const RequestOD: React.FC = () => {
                         "w-full justify-start text-left font-normal",
                         !selectedDate && "text-muted-foreground"
                       )}
+                      disabled={submitting}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
@@ -100,6 +150,7 @@ const RequestOD: React.FC = () => {
                   type="file"
                   onChange={handleFileChange}
                   accept=".pdf,.doc,.docx,.jpg,.png"
+                  disabled={submitting}
                 />
                 {supportingDocument && (
                   <p className="text-sm text-muted-foreground mt-1">
@@ -107,7 +158,9 @@ const RequestOD: React.FC = () => {
                   </p>
                 )}
               </div>
-              <Button type="submit" className="w-full">Submit OD Request</Button>
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? 'Submitting...' : 'Submit OD Request'}
+              </Button>
             </form>
           </CardContent>
         </Card>
