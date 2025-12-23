@@ -81,8 +81,8 @@ const ViewAllMarks: React.FC = () => {
 
       setAllMarks(data as unknown as MarkRecord[]);
 
-      // Extract unique subjects from fetched data for filter options
-      const uniqueSubjects = Array.from(new Set(data.map(item => (item.courses as { name: string }).name)));
+      // Extract unique subjects from fetched data for filter options, safely
+      const uniqueSubjects = Array.from(new Set(data.map((item: any) => item.courses?.name).filter(Boolean) as string[]));
       setAvailableSubjects(['all', ...uniqueSubjects]);
 
     } catch (error: any) {

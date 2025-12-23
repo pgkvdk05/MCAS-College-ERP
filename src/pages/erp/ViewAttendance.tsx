@@ -16,6 +16,7 @@ interface AttendanceRecord {
   date: string;
   status: string;
   course_id: string;
+  reason: string | null; // Added reason property
   courses?: {
     name: string;
     code: string;

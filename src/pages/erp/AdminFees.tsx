@@ -71,10 +71,11 @@ const AdminFees: React.FC = () => {
         throw error;
       }
 
-      // Add original_amount for tracking if partial payments are implemented
-      const formattedData = data.map(fee => ({
+      // Map Supabase response to cleaner object structure, explicitly typing profiles
+      const formattedData = data.map((fee: any) => ({
         ...fee,
-        original_amount: fee.amount, // For now, assume amount is the original outstanding
+        original_amount: fee.amount,
+        profiles: fee.profiles as { first_name: string; last_name: string; roll_number: string; } | null,
       }));
       setFees(formattedData as FeeRecord[]);
     } catch (error: any) {

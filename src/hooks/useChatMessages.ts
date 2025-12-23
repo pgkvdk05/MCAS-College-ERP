@@ -50,7 +50,12 @@ export const useChatMessages = (courseId: string | null) => {
       toast.error('Failed to load chat messages.');
       setMessages([]);
     } else {
-      setMessages(data || []);
+      // Explicitly map data to ChatMessage[] to ensure correct profiles type
+      const formattedMessages: ChatMessage[] = data.map((msg: any) => ({
+        ...msg,
+        profiles: msg.profiles as { first_name: string; last_name: string; username: string; } | null,
+      }));
+      setMessages(formattedMessages);
     }
     setLoading(false);
   }, [courseId]);

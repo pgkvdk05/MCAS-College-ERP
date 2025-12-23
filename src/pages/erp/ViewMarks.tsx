@@ -58,7 +58,8 @@ const ViewMarks: React.FC = () => {
         }
 
         setStudentMarks(data as unknown as MarkRecord[]);
-        const subjects = Array.from(new Set(data.map(m => (m.courses as { name: string }).name)));
+        // Safely extract subject names and filter out null/undefined
+        const subjects = Array.from(new Set(data.map(m => m.courses?.name).filter(Boolean) as string[]));
         setAvailableSubjects(subjects);
 
       } catch (error: any) {

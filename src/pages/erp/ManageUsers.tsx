@@ -19,10 +19,10 @@ interface UserProfile {
   role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null;
   employee_id: string | null;
   roll_number: string | null;
-  department_id: string | null;
+  department_id: string | null; // Added department_id
   year: string | null;
   designation: string | null;
-  avatar_url: string | null;
+  avatar_url: string | null; // Added avatar_url
   departments?: {
     name: string;
   };
@@ -53,8 +53,10 @@ const ManageUsers: React.FC = () => {
         role,
         employee_id,
         roll_number,
+        department_id,
         year,
         designation,
+        avatar_url,
         departments (
           name
         )
