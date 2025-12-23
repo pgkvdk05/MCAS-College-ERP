@@ -90,6 +90,10 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      width: {
+        'sidebar-expanded': '16rem', // 256px
+        'sidebar-collapsed': '4rem', // 64px
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

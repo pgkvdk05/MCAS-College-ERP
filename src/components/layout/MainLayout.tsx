@@ -1,11 +1,12 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { useSession } from '@/components/auth/SessionContextProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils'; // Import cn for conditional class names
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -14,6 +15,11 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { user, userRole, loading } = useSession();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -50,8 +56,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       </header>
 
       <div className="flex flex-grow">
-        {showSidebar && <Sidebar userRole={userRole} />}
-        <main className="flex-grow container mx-auto p-6">
+        {showSidebar && (
+          <Sidebar
+            userRole={userRole}
+            isCollapsed={isSidebarCollapsed}
+            toggleCollapse={toggleSidebar}
+          />
+        )}
+        <main
+          className={cn(
+            "flex-grow container mx-auto p-6 transition-all duration-300",
+            showSidebar && isSidebarCollapsed ? "ml-sidebar-collapsed" : "ml-sidebar-expanded"
+          )}
+        >
           {children}
         </main>
       </div>

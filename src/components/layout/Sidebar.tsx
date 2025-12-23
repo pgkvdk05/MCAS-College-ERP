@@ -8,12 +8,15 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   LayoutDashboard, Users, BookUser, GraduationCap,
   ClipboardList, DollarSign, Building2, BookOpen,
-  MessageSquareText, CalendarCheck, FileText, User
+  MessageSquareText, CalendarCheck, FileText, User, PanelLeft, PanelRight
 } from 'lucide-react';
 import { useSession } from '@/components/auth/SessionContextProvider';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SidebarProps {
   userRole?: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null;
+  isCollapsed: boolean;
+  toggleCollapse: () => void;
 }
 
 const navigationItems = {
@@ -60,7 +63,7 @@ const navigationItems = {
   ],
 };
 
-const Sidebar: React.FC<SidebarProps> = () => {
+const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleCollapse }) => {
   const location = useLocation();
   const { userRole, loading } = useSession();
 
@@ -69,32 +72,60 @@ const Sidebar: React.FC<SidebarProps> = () => {
   }
 
   const items = navigationItems[userRole];
+  const ToggleIcon = isCollapsed ? PanelRight : PanelLeft;
 
   return (
-    <aside className="w-64 bg-sidebar text-sidebar-foreground border-r border-sidebar-border p-4 flex flex-col shadow-lg">
-      <div className="mb-6 text-lg font-semibold text-sidebar-primary">
-        {userRole.replace('_', ' ')} Panel
+    <aside
+      className={cn(
+        "bg-sidebar text-sidebar-foreground border-r border-sidebar-border p-4 flex flex-col shadow-lg transition-all duration-300",
+        isCollapsed ? "w-sidebar-collapsed items-center" : "w-sidebar-expanded"
+      )}
+    >
+      <div className={cn("flex items-center mb-6", isCollapsed ? "justify-center" : "justify-between")}>
+        {!isCollapsed && (
+          <div className="text-lg font-semibold text-sidebar-primary whitespace-nowrap">
+            {userRole.replace('_', ' ')} Panel
+          </div>
+        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleCollapse}
+          className={cn(
+            "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+            isCollapsed ? "mx-auto" : ""
+          )}
+        >
+          <ToggleIcon className="h-5 w-5" />
+        </Button>
       </div>
-      <ScrollArea className="flex-grow">
+      <ScrollArea className="flex-grow w-full">
         <nav className="space-y-2">
           {items.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
             return (
-              <Button
-                key={item.href}
-                asChild
-                variant={isActive ? 'sidebar-primary' : 'sidebar-ghost'}
-                className={cn(
-                  "w-full justify-start",
-                  isActive ? "text-sidebar-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-              >
-                <Link to={item.href} className="flex items-center space-x-3">
-                  <Icon className="h-5 w-5" />
-                  <span>{item.name}</span>
-                </Link>
-              </Button>
+              <TooltipProvider key={item.href}>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      asChild
+                      variant={isActive ? 'sidebar-primary' : 'sidebar-ghost'}
+                      className={cn(
+                        "w-full",
+                        isCollapsed ? "justify-center" : "justify-start",
+                        isActive ? "text-sidebar-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      )}
+                    >
+                      <Link to={item.href} className={cn("flex items-center", isCollapsed ? "space-x-0" : "space-x-3")}>
+                        <Icon className="h-5 w-5" />
+                        {!isCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
+                      </Link>
+                    </Button>
+                  </TooltipTrigger>
+                  {isCollapsed && <TooltipContent side="right">{item.name}</TooltipContent>}
+                </Tooltip>
+              </TooltipProvider>
             );
           })}
         </nav>
