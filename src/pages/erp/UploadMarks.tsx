@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -9,52 +9,146 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useDepartments } from '@/hooks/useDepartments';
+import { useCourses } from '@/hooks/useCourses';
 
-const simulatedStudentsForMarks = [
-  { id: 's1', rollNumber: 'CSE001', name: 'Alice Smith', marks: '' },
-  { id: 's2', rollNumber: 'CSE002', name: 'Bob Johnson', marks: '' },
-  { id: 's3', rollNumber: 'CSE003', name: 'Charlie Brown', marks: '' },
-  { id: 's4', rollNumber: 'CSE004', name: 'Diana Prince', marks: '' },
-];
+interface StudentProfile {
+  id: string;
+  roll_number: string;
+  first_name: string;
+  last_name:
+  string;
+}
+
+interface MarkEntry {
+  student_id: string;
+  roll_number: string;
+  name: string;
+  marks: string | number | null;
+}
 
 const UploadMarks: React.FC = () => {
-  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const { departments, loading: loadingDepts } = useDepartments();
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
-  const [selectedSubject, setSelectedSubject] = useState('');
-  const [marksData, setMarksData] = useState(simulatedStudentsForMarks);
+  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const { courses, loading: loadingCourses, refreshCourses } = useCourses(selectedDepartmentId);
+
+  const [students, setStudents] = useState<StudentProfile[]>([]);
+  const [marksData, setMarksData] = useState<MarkEntry[]>([]);
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (selectedDepartmentId) {
+      refreshCourses();
+      setSelectedCourseId(''); // Reset course when department changes
+    }
+  }, [selectedDepartmentId, refreshCourses]);
+
+  useEffect(() => {
+    if (selectedDepartmentId && selectedYear) {
+      fetchStudentsForMarks();
+    } else {
+      setStudents([]);
+      setMarksData([]);
+    }
+  }, [selectedDepartmentId, selectedYear]);
+
+  const fetchStudentsForMarks = async () => {
+    setLoadingStudents(true);
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, roll_number, first_name, last_name')
+      .eq('role', 'STUDENT')
+      .eq('department_id', selectedDepartmentId)
+      .eq('year', selectedYear)
+      .order('roll_number');
+
+    if (error) {
+      console.error('Error fetching students for marks:', error);
+      toast.error('Failed to load students for this class.');
+      setStudents([]);
+      setMarksData([]);
+    } else {
+      setStudents(data as StudentProfile[]);
+      setMarksData(data.map(s => ({
+        student_id: s.id,
+        roll_number: s.roll_number,
+        name: `${s.first_name} ${s.last_name}`,
+        marks: '',
+      })));
+    }
+    setLoadingStudents(false);
+  };
 
   const handleMarkChange = (studentId: string, value: string) => {
     setMarksData((prev) =>
       prev.map((student) =>
-        student.id === studentId ? { ...student, marks: value } : student
+        student.student_id === studentId ? { ...student, marks: value } : student
       )
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDepartment || !selectedYear || !selectedSubject) {
+    if (!selectedDepartmentId || !selectedYear || !selectedCourseId) {
       toast.error('Please select department, year, and subject.');
       return;
     }
 
-    const marksToUpload = marksData.map(({ id, rollNumber, name, marks }) => ({
-      studentId: id,
-      rollNumber,
-      name,
-      subject: selectedSubject,
-      marks: marks === '' ? null : parseFloat(marks),
-    }));
+    if (marksData.length === 0) {
+      toast.error('No students found to upload marks for.');
+      return;
+    }
 
-    console.log('Marks Upload Data:', {
-      department: selectedDepartment,
-      year: selectedYear,
-      subject: selectedSubject,
-      marks: marksToUpload,
-    });
-    toast.success('Marks uploaded successfully!', {
-      description: `Class: ${selectedDepartment}-${selectedYear}, Subject: ${selectedSubject}`,
-    });
+    setSubmitting(true);
+    const marksToInsert = marksData
+      .filter(entry => entry.marks !== '' && entry.marks !== null) // Only submit entries with marks
+      .map(entry => {
+        const score = parseFloat(entry.marks as string);
+        let grade: string | null = null;
+        if (!isNaN(score)) {
+          if (score >= 90) grade = 'A+';
+          else if (score >= 80) grade = 'A';
+          else if (score >= 70) grade = 'B+';
+          else if (score >= 60) grade = 'B';
+          else if (score >= 50) grade = 'C+';
+          else if (score >= 40) grade = 'C';
+          else grade = 'F';
+        }
+
+        return {
+          student_id: entry.student_id,
+          course_id: selectedCourseId,
+          marks: score,
+          grade: grade,
+        };
+      });
+
+    if (marksToInsert.length === 0) {
+      toast.info('No marks entered to upload.');
+      setSubmitting(false);
+      return;
+    }
+
+    // Upsert marks records (update if exists for same student+course)
+    const { error } = await supabase
+      .from('marks')
+      .upsert(marksToInsert, { onConflict: 'student_id, course_id' });
+
+    if (error) {
+      console.error('Error uploading marks:', error);
+      toast.error('Failed to upload marks.', { description: error.message });
+    } else {
+      toast.success('Marks uploaded successfully!', {
+        description: `Class: ${selectedDepartmentId}-${selectedYear}, Course: ${courses.find(c => c.id === selectedCourseId)?.name}`,
+      });
+      // Optionally clear marks or refetch to show updated state
+      setMarksData(prev => prev.map(s => ({ ...s, marks: '' })));
+    }
+    setSubmitting(false);
   };
 
   return (
@@ -71,16 +165,20 @@ const UploadMarks: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="department">Department</Label>
-                  <Select onValueChange={setSelectedDepartment} value={selectedDepartment} required>
+                  <Select onValueChange={setSelectedDepartmentId} value={selectedDepartmentId} required disabled={loadingDepts}>
                     <SelectTrigger id="department">
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Commerce_BCom">Commerce (B.Com)</SelectItem>
-                      <SelectItem value="Commerce_BComCA">Commerce (B.Com CA)</SelectItem>
-                      <SelectItem value="CS_BScCS">Computer Science (B.Sc CS)</SelectItem>
-                      <SelectItem value="CS_BCA">Computer Science (BCA)</SelectItem>
-                      <SelectItem value="English_BA">English (B.A English)</SelectItem>
+                      {loadingDepts ? (
+                        <SelectItem value="loading" disabled>Loading Departments...</SelectItem>
+                      ) : (
+                        departments.map((dept) => (
+                          <SelectItem key={dept.id} value={dept.id}>
+                            {dept.name} ({dept.code})
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -98,58 +196,71 @@ const UploadMarks: React.FC = () => {
                   </Select>
                 </div>
                 <div className="md:col-span-2">
-                  <Label htmlFor="subject">Subject</Label>
-                  <Select onValueChange={setSelectedSubject} value={selectedSubject} required>
-                    <SelectTrigger id="subject">
-                      <SelectValue placeholder="Select Subject" />
+                  <Label htmlFor="course">Course</Label>
+                  <Select onValueChange={setSelectedCourseId} value={selectedCourseId} required disabled={!selectedDepartmentId || loadingCourses}>
+                    <SelectTrigger id="course">
+                      <SelectValue placeholder={!selectedDepartmentId ? "Select Dept First" : "Select Course"} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Mathematics">Mathematics</SelectItem>
-                      <SelectItem value="Physics">Physics</SelectItem>
-                      <SelectItem value="Chemistry">Chemistry</SelectItem>
-                      <SelectItem value="English">English</SelectItem>
-                      <SelectItem value="Programming">Programming</SelectItem>
+                      {loadingCourses ? (
+                        <SelectItem value="loading" disabled>Loading Courses...</SelectItem>
+                      ) : (
+                        courses.map((course) => (
+                          <SelectItem key={course.id} value={course.id}>
+                            {course.name} ({course.code})
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              {selectedDepartment && selectedYear && selectedSubject && (
+              {selectedDepartmentId && selectedYear && selectedCourseId && (
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-3">Enter Marks for {selectedSubject} ({selectedDepartment}-{selectedYear})</h3>
-                  <div className="overflow-x-auto border rounded-md">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Roll Number</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead className="text-center">Marks (out of 100)</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {marksData.map((student) => (
-                          <TableRow key={student.id}>
-                            <TableCell>{student.rollNumber}</TableCell>
-                            <TableCell>{student.name}</TableCell>
-                            <TableCell className="text-center">
-                              <Input
-                                type="number"
-                                min="0"
-                                max="100"
-                                value={student.marks}
-                                onChange={(e) => handleMarkChange(student.id, e.target.value)}
-                                className="w-24 text-center"
-                              />
-                            </TableCell>
+                  <h3 className="text-lg font-semibold mb-3">Enter Marks for {courses.find(c => c.id === selectedCourseId)?.name}</h3>
+                  {loadingStudents ? (
+                    <div className="text-center text-muted-foreground py-4">Loading students...</div>
+                  ) : students.length > 0 ? (
+                    <div className="overflow-x-auto border rounded-md">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Roll Number</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead className="text-center">Marks (out of 100)</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                        </TableHeader>
+                        <TableBody>
+                          {marksData.map((student) => (
+                            <TableRow key={student.student_id}>
+                              <TableCell>{student.roll_number}</TableCell>
+                              <TableCell>{student.name}</TableCell>
+                              <TableCell className="text-center">
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  value={student.marks || ''}
+                                  onChange={(e) => handleMarkChange(student.student_id, e.target.value)}
+                                  className="w-24 text-center"
+                                  disabled={submitting}
+                                />
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : (
+                    <div className="text-center text-muted-foreground py-4">No students found for the selected class.</div>
+                  )}
                 </div>
               )}
 
-              <Button type="submit" className="w-full">Upload Marks</Button>
+              <Button type="submit" className="w-full" disabled={submitting || marksData.length === 0}>
+                {submitting ? 'Uploading Marks...' : 'Upload Marks'}
+              </Button>
             </form>
           </CardContent>
         </Card>

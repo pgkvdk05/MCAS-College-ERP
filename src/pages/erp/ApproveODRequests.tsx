@@ -1,28 +1,81 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
-const simulatedODRequests = [
-  { id: 'od1', studentName: 'Alice Smith', rollNumber: 'CSE001', reason: 'Inter-college Debate Competition', date: '2025-03-10', status: 'Pending' },
-  { id: 'od2', studentName: 'Bob Johnson', rollNumber: 'CSE002', reason: 'NCC Camp', date: '2025-03-12', status: 'Approved' },
-  { id: 'od3', studentName: 'Charlie Brown', rollNumber: 'CSE003', reason: 'Sports Tournament', date: '2025-03-15', status: 'Pending' },
-  { id: 'od4', studentName: 'Diana Prince', rollNumber: 'CSE004', reason: 'Medical Appointment', date: '2025-03-11', status: 'Rejected' },
-];
+interface ODRequest {
+  id: string;
+  student_id: string;
+  reason: string;
+  request_date: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  supporting_document_url: string | null;
+  profiles?: {
+    first_name: string;
+    last_name: string;
+    roll_number: string;
+  };
+}
 
 const ApproveODRequests: React.FC = () => {
-  const [requests, setRequests] = useState(simulatedODRequests);
+  const [requests, setRequests] = useState<ODRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleAction = (id: string, action: 'Approved' | 'Rejected') => {
-    setRequests((prev) =>
-      prev.map((req) => (req.id === id ? { ...req, status: action } : req))
-    );
-    toast.success(`OD Request ${id} ${action}!`);
+  useEffect(() => {
+    fetchODRequests();
+  }, []);
+
+  const fetchODRequests = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('od_requests')
+      .select(`
+        id,
+        student_id,
+        reason,
+        request_date,
+        status,
+        supporting_document_url,
+        profiles (
+          first_name,
+          last_name,
+          roll_number
+        )
+      `)
+      .order('request_date', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching OD requests:', error);
+      toast.error('Failed to load OD requests.', { description: error.message });
+      setRequests([]);
+    } else {
+      setRequests(data as unknown as ODRequest[]);
+    }
+    setLoading(false);
+  };
+
+  const handleAction = async (id: string, action: 'Approved' | 'Rejected') => {
+    setSubmitting(true);
+    const { error } = await supabase
+      .from('od_requests')
+      .update({ status: action })
+      .eq('id', id);
+
+    if (error) {
+      console.error(`Error updating OD request ${id}:`, error);
+      toast.error(`Failed to ${action.toLowerCase()} OD request.`, { description: error.message });
+    } else {
+      toast.success(`OD Request ${id} ${action}!`);
+      fetchODRequests(); // Refresh the list
+    }
+    setSubmitting(false);
   };
 
   return (
@@ -43,18 +96,32 @@ const ApproveODRequests: React.FC = () => {
                     <TableHead>Roll Number</TableHead>
                     <TableHead>Reason</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead>Document</TableHead>
                     <TableHead className="text-center">Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {requests.length > 0 ? (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-muted-foreground">
+                        Loading OD requests...
+                      </TableCell>
+                    </TableRow>
+                  ) : requests.length > 0 ? (
                     requests.map((req) => (
                       <TableRow key={req.id}>
-                        <TableCell className="font-medium">{req.studentName}</TableCell>
-                        <TableCell>{req.rollNumber}</TableCell>
+                        <TableCell className="font-medium">{req.profiles?.first_name} {req.profiles?.last_name}</TableCell>
+                        <TableCell>{req.profiles?.roll_number}</TableCell>
                         <TableCell>{req.reason}</TableCell>
-                        <TableCell>{req.date}</TableCell>
+                        <TableCell>{req.request_date}</TableCell>
+                        <TableCell>
+                          {req.supporting_document_url ? (
+                            <a href={req.supporting_document_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">View Doc</a>
+                          ) : (
+                            '-'
+                          )}
+                        </TableCell>
                         <TableCell className="text-center">
                           <Badge
                             variant={
@@ -71,10 +138,10 @@ const ApproveODRequests: React.FC = () => {
                         <TableCell className="text-right space-x-2">
                           {req.status === 'Pending' && (
                             <>
-                              <Button size="sm" onClick={() => handleAction(req.id, 'Approved')}>
+                              <Button size="sm" onClick={() => handleAction(req.id, 'Approved')} disabled={submitting}>
                                 Approve
                               </Button>
-                              <Button size="sm" variant="destructive" onClick={() => handleAction(req.id, 'Rejected')}>
+                              <Button size="sm" variant="destructive" onClick={() => handleAction(req.id, 'Rejected')} disabled={submitting}>
                                 Reject
                               </Button>
                             </>
@@ -89,7 +156,7 @@ const ApproveODRequests: React.FC = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground">
+                      <TableCell colSpan={7} className="text-center text-muted-foreground">
                         No OD requests found.
                       </TableCell>
                     </TableRow>

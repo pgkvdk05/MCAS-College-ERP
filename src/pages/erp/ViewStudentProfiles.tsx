@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,27 +8,80 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useDepartments } from '@/hooks/useDepartments';
 
-const simulatedStudentProfiles = [
-  { id: 's1', name: 'Alice Smith', rollNumber: 'CSE001', department: 'CS_BScCS', year: '1', section: 'A', email: 'alice@college.com' },
-  { id: 's2', name: 'Bob Johnson', rollNumber: 'CSE002', department: 'CS_BScCS', year: '1', section: 'A', email: 'bob@college.com' },
-  { id: 's3', name: 'Charlie Brown', rollNumber: 'BCOM001', department: 'Commerce_BCom', year: '2', section: 'B', email: 'charlie@college.com' },
-  { id: 's4', name: 'Diana Prince', rollNumber: 'BCOMCA001', department: 'Commerce_BComCA', year: '3', section: 'C', email: 'diana@college.com' },
-];
+interface StudentProfile {
+  id: string;
+  first_name: string;
+  last_name: string;
+  roll_number: string;
+  department_id: string;
+  year: string;
+  email: string;
+  departments?: {
+    name: string;
+  };
+}
 
 const ViewStudentProfiles: React.FC = () => {
+  const { departments, loading: loadingDepts } = useDepartments();
+  const [studentProfiles, setStudentProfiles] = useState<StudentProfile[]>([]);
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
   const [filterDepartment, setFilterDepartment] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
 
-  const filteredStudents = simulatedStudentProfiles.filter(student => {
-    return (
-      (filterDepartment === 'all' || student.department === filterDepartment) &&
-      (filterYear === 'all' || student.year === filterYear)
-    );
-  });
+  useEffect(() => {
+    fetchStudentProfiles();
+  }, [filterDepartment, filterYear]);
 
-  const handleViewDetails = (studentName: string) => {
-    toast.info(`Simulating viewing details for ${studentName}.`);
+  const fetchStudentProfiles = async () => {
+    setLoadingProfiles(true);
+    try {
+      let query = supabase
+        .from('profiles')
+        .select(`
+          id,
+          first_name,
+          last_name,
+          roll_number,
+          department_id,
+          year,
+          email,
+          departments (
+            name
+          )
+        `)
+        .eq('role', 'STUDENT')
+        .order('roll_number', { ascending: true });
+
+      if (filterDepartment !== 'all') {
+        query = query.eq('department_id', filterDepartment);
+      }
+      if (filterYear !== 'all') {
+        query = query.eq('year', filterYear);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      setStudentProfiles(data as unknown as StudentProfile[]);
+    } catch (error: any) {
+      console.error('Error fetching student profiles:', error);
+      toast.error('Failed to load student profiles.');
+      setStudentProfiles([]);
+    } finally {
+      setLoadingProfiles(false);
+    }
+  };
+
+  const handleViewDetails = (studentName: string, studentId: string) => {
+    toast.info(`Simulating viewing details for ${studentName} (ID: ${studentId}).`);
+    // In a real application, you might navigate to a detailed student profile page:
+    // navigate(`/erp/student-details/${studentId}`);
   };
 
   return (
@@ -44,17 +97,21 @@ const ViewStudentProfiles: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <Label htmlFor="filterDepartment">Department</Label>
-                <Select onValueChange={setFilterDepartment} value={filterDepartment}>
+                <Select onValueChange={setFilterDepartment} value={filterDepartment} disabled={loadingDepts}>
                   <SelectTrigger id="filterDepartment">
                     <SelectValue placeholder="All Departments" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
-                    <SelectItem value="Commerce_BCom">Commerce (B.Com)</SelectItem>
-                    <SelectItem value="Commerce_BComCA">Commerce (B.Com CA)</SelectItem>
-                    <SelectItem value="CS_BScCS">Computer Science (B.Sc CS)</SelectItem>
-                    <SelectItem value="CS_BCA">Computer Science (BCA)</SelectItem>
-                    <SelectItem value="English_BA">English (B.A English)</SelectItem>
+                    {loadingDepts ? (
+                      <SelectItem value="loading" disabled>Loading Departments...</SelectItem>
+                    ) : (
+                      departments.map((dept) => (
+                        <SelectItem key={dept.id} value={dept.id}>
+                          {dept.name} ({dept.code})
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -86,15 +143,21 @@ const ViewStudentProfiles: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredStudents.length > 0 ? (
-                    filteredStudents.map((student) => (
+                  {loadingProfiles ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-muted-foreground">
+                        Loading student profiles...
+                      </TableCell>
+                    </TableRow>
+                  ) : studentProfiles.length > 0 ? (
+                    studentProfiles.map((student) => (
                       <TableRow key={student.id}>
-                        <TableCell className="font-medium">{student.name}</TableCell>
-                        <TableCell>{student.rollNumber}</TableCell>
-                        <TableCell>{student.department.split('_')[0]} {student.year}</TableCell>
+                        <TableCell className="font-medium">{student.first_name} {student.last_name}</TableCell>
+                        <TableCell>{student.roll_number}</TableCell>
+                        <TableCell>{student.departments?.name || 'N/A'} {student.year}</TableCell>
                         <TableCell>{student.email}</TableCell>
                         <TableCell className="text-right">
-                          <Button size="sm" variant="outline" onClick={() => handleViewDetails(student.name)}>
+                          <Button size="sm" variant="outline" onClick={() => handleViewDetails(`${student.first_name} ${student.last_name}`, student.id)}>
                             View Details
                           </Button>
                         </TableCell>

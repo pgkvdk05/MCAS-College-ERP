@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -10,66 +10,126 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface FeeRecord {
   id: string;
-  studentName: string;
-  rollNumber: string;
-  type: string;
-  amount: number;
-  dueDate: string;
+  student_id: string;
+  fee_type: string;
+  amount: number; // This will be the *outstanding* amount
+  original_amount: number; // Store original amount if needed for partial payments
+  due_date: string;
   status: 'Paid' | 'Outstanding';
-  paidAmount?: number;
+  paid_at: string | null;
+  profiles?: {
+    first_name: string;
+    last_name: string;
+    roll_number: string;
+  };
 }
 
-const simulatedAllStudentFees: FeeRecord[] = [
-  { id: 'f1', studentName: 'Alice Smith', rollNumber: 'CSE001', type: 'Tuition Fee', amount: 15000, dueDate: '2025-01-15', status: 'Paid' },
-  { id: 'f2', studentName: 'Bob Johnson', rollNumber: 'CSE002', type: 'Exam Fee', amount: 1500, dueDate: '2025-02-01', status: 'Outstanding' },
-  { id: 'f3', studentName: 'Charlie Brown', rollNumber: 'CSE003', type: 'Library Fee', amount: 500, dueDate: '2025-01-30', status: 'Paid' },
-  { id: 'f4', studentName: 'Diana Prince', rollNumber: 'CSE004', type: 'Hostel Fee', amount: 10000, dueDate: '2025-03-10', status: 'Outstanding' },
-  { id: 'f5', studentName: 'Alice Smith', rollNumber: 'CSE001', type: 'Exam Fee', amount: 1500, dueDate: '2025-02-01', status: 'Outstanding' },
-];
-
 const AdminFees: React.FC = () => {
-  const [fees, setFees] = useState<FeeRecord[]>(simulatedAllStudentFees);
+  const [fees, setFees] = useState<FeeRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
   const [editingFeeId, setEditingFeeId] = useState<string | null>(null);
   const [paymentAmount, setPaymentAmount] = useState<number | ''>('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const filteredFees = filterStatus === 'all'
-    ? fees
-    : fees.filter(fee => fee.status === filterStatus);
+  useEffect(() => {
+    fetchFees();
+  }, [filterStatus]);
+
+  const fetchFees = async () => {
+    setLoading(true);
+    try {
+      let query = supabase
+        .from('fees')
+        .select(`
+          id,
+          student_id,
+          fee_type,
+          amount,
+          due_date,
+          status,
+          paid_at,
+          profiles (
+            first_name,
+            last_name,
+            roll_number
+          )
+        `)
+        .order('due_date', { ascending: true });
+
+      if (filterStatus !== 'all') {
+        query = query.eq('status', filterStatus);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      // Add original_amount for tracking if partial payments are implemented
+      const formattedData = data.map(fee => ({
+        ...fee,
+        original_amount: fee.amount, // For now, assume amount is the original outstanding
+      }));
+      setFees(formattedData as FeeRecord[]);
+    } catch (error: any) {
+      console.error('Error fetching fees:', error);
+      toast.error('Failed to load fee records.', { description: error.message });
+      setFees([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleMarkAsPaidClick = (feeId: string, currentAmount: number) => {
     setEditingFeeId(feeId);
-    setPaymentAmount(currentAmount); // Pre-fill with full amount
+    setPaymentAmount(currentAmount); // Pre-fill with full outstanding amount
   };
 
-  const handleConfirmPayment = (feeId: string, originalAmount: number) => {
+  const handleConfirmPayment = async (feeId: string, originalOutstandingAmount: number) => {
     if (paymentAmount === '' || paymentAmount <= 0) {
       toast.error('Please enter a valid payment amount.');
       return;
     }
-    if (paymentAmount > originalAmount) {
+    if (paymentAmount > originalOutstandingAmount) {
       toast.error('Payment amount cannot exceed the outstanding amount.');
       return;
     }
 
-    setFees((prevFees) =>
-      prevFees.map((fee) =>
-        fee.id === feeId
-          ? {
-              ...fee,
-              status: paymentAmount === originalAmount ? 'Paid' : 'Outstanding', // Mark as paid only if full amount
-              amount: originalAmount - paymentAmount, // Reduce outstanding amount
-              paidAmount: (fee.paidAmount || 0) + paymentAmount, // Accumulate paid amount
-            }
-          : fee
-      )
-    );
-    toast.success(`Payment of ₹${paymentAmount.toLocaleString()} recorded for fee ${feeId}.`);
-    setEditingFeeId(null);
-    setPaymentAmount('');
+    setSubmitting(true);
+    try {
+      const newOutstandingAmount = originalOutstandingAmount - paymentAmount;
+      const newStatus = newOutstandingAmount <= 0 ? 'Paid' : 'Outstanding';
+      const paidAt = newStatus === 'Paid' ? new Date().toISOString() : null;
+
+      const { error } = await supabase
+        .from('fees')
+        .update({
+          amount: newOutstandingAmount,
+          status: newStatus,
+          paid_at: paidAt,
+        })
+        .eq('id', feeId);
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success(`Payment of ₹${paymentAmount.toLocaleString()} recorded for fee.`);
+      fetchFees(); // Refresh the list to show updated status
+      setEditingFeeId(null);
+      setPaymentAmount('');
+    } catch (error: any) {
+      console.error('Error recording payment:', error);
+      toast.error('Failed to record payment.', { description: error.message });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleCancelPayment = () => {
@@ -89,7 +149,7 @@ const AdminFees: React.FC = () => {
           <CardContent>
             <div className="mb-4 flex items-center space-x-4">
               <Label htmlFor="filterStatus">Filter by Status</Label>
-              <Select onValueChange={setFilterStatus} value={filterStatus}>
+              <Select onValueChange={setFilterStatus} value={filterStatus} disabled={submitting}>
                 <SelectTrigger id="filterStatus" className="w-[180px]">
                   <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
@@ -115,14 +175,20 @@ const AdminFees: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredFees.length > 0 ? (
-                    filteredFees.map((fee) => (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-muted-foreground">
+                        Loading fee records...
+                      </TableCell>
+                    </TableRow>
+                  ) : fees.length > 0 ? (
+                    fees.map((fee) => (
                       <TableRow key={fee.id}>
-                        <TableCell className="font-medium">{fee.studentName}</TableCell>
-                        <TableCell>{fee.rollNumber}</TableCell>
-                        <TableCell>{fee.type}</TableCell>
+                        <TableCell className="font-medium">{fee.profiles?.first_name} {fee.profiles?.last_name}</TableCell>
+                        <TableCell>{fee.profiles?.roll_number}</TableCell>
+                        <TableCell>{fee.fee_type}</TableCell>
                         <TableCell className="text-right">₹{fee.amount.toLocaleString()}</TableCell>
-                        <TableCell>{fee.dueDate}</TableCell>
+                        <TableCell>{fee.due_date}</TableCell>
                         <TableCell className="text-center">
                           <Badge variant={fee.status === 'Paid' ? 'default' : 'destructive'}>
                             {fee.status}
@@ -130,7 +196,7 @@ const AdminFees: React.FC = () => {
                         </TableCell>
                         <TableCell className="text-right">
                           {fee.status === 'Outstanding' && editingFeeId !== fee.id && (
-                            <Button size="sm" onClick={() => handleMarkAsPaidClick(fee.id, fee.amount)}>
+                            <Button size="sm" onClick={() => handleMarkAsPaidClick(fee.id, fee.amount)} disabled={submitting}>
                               Mark as Paid
                             </Button>
                           )}
@@ -144,11 +210,12 @@ const AdminFees: React.FC = () => {
                                 className="w-24"
                                 min="1"
                                 max={fee.amount}
+                                disabled={submitting}
                               />
-                              <Button size="sm" onClick={() => handleConfirmPayment(fee.id, fee.amount)}>
+                              <Button size="sm" onClick={() => handleConfirmPayment(fee.id, fee.amount)} disabled={submitting}>
                                 Confirm
                               </Button>
-                              <Button size="sm" variant="outline" onClick={handleCancelPayment}>
+                              <Button size="sm" variant="outline" onClick={handleCancelPayment} disabled={submitting}>
                                 Cancel
                               </Button>
                             </div>
