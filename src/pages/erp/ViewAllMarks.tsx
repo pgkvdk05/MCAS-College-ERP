@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useDepartments } from '@/hooks/useDepartments';
 import { toast } from 'sonner';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface MarkRecord {
   id: string;
@@ -104,11 +105,14 @@ const ViewAllMarks: React.FC = () => {
   return (
     <MainLayout userRole="ADMIN">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">View All Marks</h2>
+        <PageHeader
+          title="View All Marks"
+          description="Comprehensive academic performance overview for all students."
+        />
         <Card className="max-w-6xl mx-auto">
           <CardHeader>
-            <CardTitle>Comprehensive Academic Performance</CardTitle>
-            <CardDescription>View marks for all students across different classes and subjects.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Comprehensive Academic Performance</CardTitle>
+            <CardDescription className="text-muted-foreground">View marks for all students across different classes and subjects.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">

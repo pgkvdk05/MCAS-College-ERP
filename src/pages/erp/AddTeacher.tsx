@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { createTemporaryClient } from '@/utils/auth-helpers';
 import { useDepartments } from '@/hooks/useDepartments';
+import PageHeader from '@/components/layout/PageHeader';
 
 const AddTeacher: React.FC = () => {
   const { departments, loading: loadingDepts } = useDepartments();
@@ -102,11 +103,14 @@ const AddTeacher: React.FC = () => {
   return (
     <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Add New Teacher</h2>
+        <PageHeader
+          title="Add New Teacher"
+          description="Create a new teacher account."
+        />
         <Card className="max-w-2xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">Teacher Details</CardTitle>
-            <CardDescription className="text-muted-foreground">Create a new teacher account.</CardDescription>
+            <CardDescription className="text-muted-foreground">Enter the details for the new teacher.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">

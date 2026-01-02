@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface Department {
   id: string;
@@ -91,7 +92,10 @@ const ManageDepartments: React.FC = () => {
   return (
     <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Manage Departments</h2>
+        <PageHeader
+          title="Manage Departments"
+          description="Add, view, and remove academic departments."
+        />
         <Card className="max-w-4xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">College Departments</CardTitle>

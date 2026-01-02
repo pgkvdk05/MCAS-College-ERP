@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface AttendanceRecord {
   id: string;
@@ -86,7 +87,10 @@ const ViewAttendance: React.FC = () => {
   return (
     <MainLayout userRole="STUDENT">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">My Attendance</h2>
+        <PageHeader
+          title="My Attendance"
+          description="Overview of your attendance records."
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>

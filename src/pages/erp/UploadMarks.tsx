@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useDepartments } from '@/hooks/useDepartments';
 import { useCourses } from '@/hooks/useCourses';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface StudentProfile {
   id: string;
@@ -154,7 +155,10 @@ const UploadMarks: React.FC = () => {
   return (
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Upload Marks</h2>
+        <PageHeader
+          title="Upload Marks"
+          description="Select the class and subject, then enter marks for each student."
+        />
         <Card className="max-w-3xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">Enter Student Marks</CardTitle>

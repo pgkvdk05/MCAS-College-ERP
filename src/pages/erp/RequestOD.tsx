@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/auth/SessionContextProvider';
+import PageHeader from '@/components/layout/PageHeader';
 
 const RequestOD: React.FC = () => {
   const { user, loading: sessionLoading } = useSession();
@@ -98,7 +99,10 @@ const RequestOD: React.FC = () => {
   return (
     <MainLayout userRole="STUDENT">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Request On Duty (OD)</h2>
+        <PageHeader
+          title="Request On Duty (OD)"
+          description="Fill out the form to request On Duty status for an event."
+        />
         <Card className="max-w-lg mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">Submit OD Request</CardTitle>

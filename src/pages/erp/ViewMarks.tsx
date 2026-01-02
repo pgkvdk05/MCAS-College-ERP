@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/auth/SessionContextProvider';
 import { toast } from 'sonner';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface MarkRecord {
   id: string;
@@ -96,7 +97,10 @@ const ViewMarks: React.FC = () => {
   return (
     <MainLayout userRole="STUDENT">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">My Marks</h2>
+        <PageHeader
+          title="My Marks"
+          description="Overview of your academic performance."
+        />
         <Card className="max-w-3xl mx-auto">
           <CardHeader>
             <CardTitle>Academic Performance</CardTitle>

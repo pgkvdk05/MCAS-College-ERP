@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface FeeRecord {
   id: string;
@@ -141,7 +142,10 @@ const AdminFees: React.FC = () => {
   return (
     <MainLayout userRole="ADMIN">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Manage Student Fees</h2>
+        <PageHeader
+          title="Manage Student Fees"
+          description="View and manage fee status for all students."
+        />
         <Card className="max-w-5xl mx-auto">
           <CardHeader>
             <CardTitle>All Student Fee Records</CardTitle>

@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/auth/SessionContextProvider';
 import { Link, useNavigate } from 'react-router-dom';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface UserProfile {
   id: string;
@@ -111,11 +112,14 @@ const ManageUsers: React.FC = () => {
   return (
     <MainLayout userRole={contextUserRole}>
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Manage Users</h2>
+        <PageHeader
+          title="Manage Users"
+          description="View and manage all user accounts in the ERP system."
+        />
         <Card className="shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">All System Users</CardTitle>
-            <CardDescription className="text-muted-foreground">View and manage all user accounts in the ERP system.</CardDescription>
+            <CardDescription className="text-muted-foreground">Add, edit, or delete user accounts.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-4 mb-6">

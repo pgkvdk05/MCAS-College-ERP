@@ -18,6 +18,7 @@ import { CalendarIcon } from 'lucide-react';
 import { useDepartments } from '@/hooks/useDepartments';
 import { useCourses } from '@/hooks/useCourses';
 import { supabase } from '@/integrations/supabase/client';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface Student {
   id: string;
@@ -142,7 +143,10 @@ const MarkAttendance: React.FC = () => {
   return (
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Mark Attendance</h2>
+        <PageHeader
+          title="Mark Attendance"
+          description="Select the class and mark attendance for students."
+        />
         <Card className="max-w-4xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">Mark Daily Attendance</CardTitle>

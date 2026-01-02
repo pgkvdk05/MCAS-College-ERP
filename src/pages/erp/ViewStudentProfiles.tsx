@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useDepartments } from '@/hooks/useDepartments';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface StudentProfile {
   id: string;
@@ -87,7 +88,10 @@ const ViewStudentProfiles: React.FC = () => {
   return (
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">View Student Profiles</h2>
+        <PageHeader
+          title="View Student Profiles"
+          description="Browse student profiles by class."
+        />
         <Card className="max-w-6xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">Student Directory</CardTitle>

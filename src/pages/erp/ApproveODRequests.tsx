@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface ODRequest {
   id: string;
@@ -81,7 +82,10 @@ const ApproveODRequests: React.FC = () => {
   return (
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Approve OD Requests</h2>
+        <PageHeader
+          title="Approve OD Requests"
+          description="Review and take action on student On Duty requests."
+        />
         <Card className="max-w-5xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">Outstanding Duty Requests</CardTitle>

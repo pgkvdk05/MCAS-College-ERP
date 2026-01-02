@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useDepartments } from '@/hooks/useDepartments';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface Course {
   id: string;
@@ -111,7 +112,10 @@ const ManageCourses: React.FC = () => {
   return (
     <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Manage Courses</h2>
+        <PageHeader
+          title="Manage Courses"
+          description="Add, view, and remove courses offered by the college."
+        />
         <Card className="max-w-5xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">Academic Courses</CardTitle>

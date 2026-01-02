@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useDepartments } from '@/hooks/useDepartments';
 import { toast } from 'sonner';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface AttendanceLog {
   id: string;
@@ -104,7 +105,10 @@ const ViewAllAttendance: React.FC = () => {
   return (
     <MainLayout userRole="ADMIN">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Attendance Logs</h2>
+        <PageHeader
+          title="Attendance Logs"
+          description="View attendance records for all students."
+        />
 
         <Card className="shadow-lg rounded-lg">
           <CardHeader className="pb-3">

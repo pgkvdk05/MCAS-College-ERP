@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useDepartments } from '@/hooks/useDepartments';
 import { showError } from '@/utils/toast';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface UserProfile {
   id: string;
@@ -139,7 +140,10 @@ const EditUser: React.FC = () => {
   return (
     <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Edit User: {formData.first_name} {formData.last_name}</h2>
+        <PageHeader
+          title={`Edit User: ${formData.first_name} ${formData.last_name}`}
+          description="Update the profile information for this user."
+        />
         <Card className="max-w-3xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">User Details</CardTitle>

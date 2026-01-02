@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/auth/SessionContextProvider';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface FeeRecord {
   id: string;
@@ -75,7 +76,10 @@ const StudentFees: React.FC = () => {
   return (
     <MainLayout userRole="STUDENT">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">My Fees</h2>
+        <PageHeader
+          title="My Fees"
+          description="Overview of your academic fees and payment status."
+        />
         <Card className="max-w-4xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">Fee Status</CardTitle>

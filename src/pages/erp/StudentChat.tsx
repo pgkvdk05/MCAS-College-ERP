@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { useCourses } from '@/hooks/useCourses';
 import { useChatMessages } from '@/hooks/useChatMessages';
 import { useSession } from '@/components/auth/SessionContextProvider';
+import PageHeader from '@/components/layout/PageHeader';
 
 const StudentChat: React.FC = () => {
   const { user, userRole } = useSession();
@@ -48,7 +49,10 @@ const StudentChat: React.FC = () => {
   return (
     <MainLayout userRole={userRole}>
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">Class Chat</h2>
+        <PageHeader
+          title="Class Chat"
+          description="Communicate with your teachers and classmates."
+        />
         <Card className="max-w-3xl mx-auto h-[600px] flex flex-col shadow-lg rounded-lg">
           <CardHeader className="pb-4">
             <CardTitle className="text-2xl font-semibold">General Class Discussion</CardTitle>

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/auth/SessionContextProvider';
 import { toast } from 'sonner';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface TeacherClass {
   id: string;
@@ -106,7 +107,10 @@ const ViewMyClasses: React.FC = () => {
   return (
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-primary">My Classes</h2>
+        <PageHeader
+          title="My Classes"
+          description="Overview of the classes and subjects you are currently teaching."
+        />
         <Card className="max-w-4xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">Assigned Classes</CardTitle>
