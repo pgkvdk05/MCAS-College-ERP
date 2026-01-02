@@ -28,7 +28,7 @@ const dashboardConfig = {
           { title: 'Total Users', value: '2,350', trend: '+180 this month', icon: Users, href: '/erp/manage-users' },
           { title: 'Active Departments', value: '5', trend: 'All active', icon: Building2, href: '/erp/manage-departments' },
           { title: 'Total Courses', value: '45', trend: '+5 new this semester', icon: BookOpen, href: '/erp/manage-courses' },
-          { title: 'Pending OD Requests', value: '7', trend: 'Requires immediate action', icon: CalendarCheck, href: '/erp/od/approve' },
+          { title: 'Pending OD Requests', value: '0', trend: 'Requires immediate action', icon: CalendarCheck, href: '/erp/od/approve' },
         ],
       },
       {
