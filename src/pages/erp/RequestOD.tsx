@@ -99,15 +99,15 @@ const RequestOD: React.FC = () => {
     <MainLayout userRole="STUDENT">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Request On Duty (OD)</h2>
-        <Card className="max-w-lg mx-auto">
+        <Card className="max-w-lg mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Submit OD Request</CardTitle>
-            <CardDescription>Fill out the form to request On Duty status for an event.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Submit OD Request</CardTitle>
+            <CardDescription className="text-muted-foreground">Fill out the form to request On Duty status for an event.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="reason">Reason for OD</Label>
+                <Label htmlFor="reason" className="text-sm font-medium">Reason for OD</Label>
                 <Textarea
                   id="reason"
                   placeholder="e.g., Participating in inter-college sports event, attending a workshop, etc."
@@ -115,16 +115,17 @@ const RequestOD: React.FC = () => {
                   onChange={(e) => setReason(e.target.value)}
                   required
                   disabled={submitting}
+                  className="mt-1"
                 />
               </div>
               <div>
-                <Label htmlFor="date">Date of OD</Label>
+                <Label htmlFor="date" className="text-sm font-medium">Date of OD</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full justify-start text-left font-normal mt-1",
                         !selectedDate && "text-muted-foreground"
                       )}
                       disabled={submitting}
@@ -144,13 +145,14 @@ const RequestOD: React.FC = () => {
                 </Popover>
               </div>
               <div>
-                <Label htmlFor="supportingDocument">Supporting Document (Optional)</Label>
+                <Label htmlFor="supportingDocument" className="text-sm font-medium">Supporting Document (Optional)</Label>
                 <Input
                   id="supportingDocument"
                   type="file"
                   onChange={handleFileChange}
                   accept=".pdf,.doc,.docx,.jpg,.png"
                   disabled={submitting}
+                  className="mt-1"
                 />
                 {supportingDocument && (
                   <p className="text-sm text-muted-foreground mt-1">
@@ -158,7 +160,7 @@ const RequestOD: React.FC = () => {
                   </p>
                 )}
               </div>
-              <Button type="submit" className="w-full" disabled={submitting}>
+              <Button type="submit" className="w-full py-2 text-base font-semibold" disabled={submitting}>
                 {submitting ? 'Submitting...' : 'Submit OD Request'}
               </Button>
             </form>

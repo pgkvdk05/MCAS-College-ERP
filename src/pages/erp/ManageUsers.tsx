@@ -19,10 +19,10 @@ interface UserProfile {
   role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | null;
   employee_id: string | null;
   roll_number: string | null;
-  department_id: string | null; // Added department_id
+  department_id: string | null;
   year: string | null;
   designation: string | null;
-  avatar_url: string | null; // Added avatar_url
+  avatar_url: string | null;
   departments?: {
     name: string;
   };
@@ -112,43 +112,43 @@ const ManageUsers: React.FC = () => {
     <MainLayout userRole={contextUserRole}>
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Manage Users</h2>
-        <Card>
+        <Card className="shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>All System Users</CardTitle>
-            <CardDescription>View and manage all user accounts in the ERP system.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">All System Users</CardTitle>
+            <CardDescription className="text-muted-foreground">View and manage all user accounts in the ERP system.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-4 mb-6">
-              <Button asChild>
+              <Button asChild className="py-2 text-base font-semibold">
                 <Link to="/erp/add-teacher">Add New Teacher</Link>
               </Button>
-              <Button asChild>
+              <Button asChild className="py-2 text-base font-semibold">
                 <Link to="/erp/add-student">Add New Student</Link>
               </Button>
             </div>
 
-            <div className="overflow-x-auto border rounded-md">
+            <div className="overflow-x-auto border rounded-md shadow-sm">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Identifier</TableHead>
-                    <TableHead>Department</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-muted/20">
+                    <TableHead className="font-semibold">Name</TableHead>
+                    <TableHead className="font-semibold">Role</TableHead>
+                    <TableHead className="font-semibold">Email</TableHead>
+                    <TableHead className="font-semibold">Identifier</TableHead>
+                    <TableHead className="font-semibold">Department</TableHead>
+                    <TableHead className="text-right font-semibold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground">
+                      <TableCell colSpan={6} className="text-center text-muted-foreground py-4">
                         Loading users...
                       </TableCell>
                     </TableRow>
                   ) : users.length > 0 ? (
                     users.map((user) => (
-                      <TableRow key={user.id}>
+                      <TableRow key={user.id} className="hover:bg-muted/50">
                         <TableCell className="font-medium">{user.first_name} {user.last_name}</TableCell>
                         <TableCell>{user.role?.replace('_', ' ')}</TableCell>
                         <TableCell>{user.email || 'N/A'}</TableCell>
@@ -162,7 +162,7 @@ const ManageUsers: React.FC = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground">
+                      <TableCell colSpan={6} className="text-center text-muted-foreground py-4">
                         No users found.
                       </TableCell>
                     </TableRow>

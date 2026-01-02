@@ -118,45 +118,45 @@ const AddStudent: React.FC = () => {
     <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Add New Student</h2>
-        <Card className="max-w-2xl mx-auto">
+        <Card className="max-w-2xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Student Details</CardTitle>
-            <CardDescription>Create a new student account with comprehensive details.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Student Details</CardTitle>
+            <CardDescription className="text-muted-foreground">Create a new student account with comprehensive details.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" value={formData.firstName} onChange={handleChange} required />
+                  <Label htmlFor="firstName" className="text-sm font-medium">First Name</Label>
+                  <Input id="firstName" value={formData.firstName} onChange={handleChange} required className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" value={formData.lastName} onChange={handleChange} required />
+                  <Label htmlFor="lastName" className="text-sm font-medium">Last Name</Label>
+                  <Input id="lastName" value={formData.lastName} onChange={handleChange} required className="mt-1" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" value={formData.email} onChange={handleChange} required />
+                  <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                  <Input id="email" type="email" value={formData.email} onChange={handleChange} required className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="rollNumber">Roll Number</Label>
-                  <Input id="rollNumber" value={formData.rollNumber} onChange={handleChange} required />
+                  <Label htmlFor="rollNumber" className="text-sm font-medium">Roll Number</Label>
+                  <Input id="rollNumber" value={formData.rollNumber} onChange={handleChange} required className="mt-1" />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" value={formData.password} onChange={handleChange} required />
+                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                <Input id="password" type="password" value={formData.password} onChange={handleChange} required className="mt-1" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="departmentId">Department</Label>
+                  <Label htmlFor="departmentId" className="text-sm font-medium">Department</Label>
                   <Select onValueChange={(value) => handleSelectChange(value, 'departmentId')} value={formData.departmentId} required>
-                    <SelectTrigger id="departmentId">
+                    <SelectTrigger id="departmentId" className="mt-1">
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
@@ -173,9 +173,9 @@ const AddStudent: React.FC = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="year">Year</Label>
+                  <Label htmlFor="year" className="text-sm font-medium">Year</Label>
                   <Select onValueChange={(value) => handleSelectChange(value, 'year')} value={formData.year} required>
-                    <SelectTrigger id="year">
+                    <SelectTrigger id="year" className="mt-1">
                       <SelectValue placeholder="Select Year" />
                     </SelectTrigger>
                     <SelectContent>
@@ -189,38 +189,39 @@ const AddStudent: React.FC = () => {
 
               {/* New Fields */}
               <div>
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address" className="text-sm font-medium">Address</Label>
                 <Textarea
                   id="address"
                   placeholder="Enter student's full address"
                   value={formData.address}
                   onChange={handleChange}
+                  className="mt-1"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="tenthSchoolName">10th School Name</Label>
-                  <Input id="tenthSchoolName" value={formData.tenthSchoolName} onChange={handleChange} />
+                  <Label htmlFor="tenthSchoolName" className="text-sm font-medium">10th School Name</Label>
+                  <Input id="tenthSchoolName" value={formData.tenthSchoolName} onChange={handleChange} className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="tenthMarkScore">10th Mark Score (out of 100)</Label>
-                  <Input id="tenthMarkScore" type="number" min="0" max="100" value={formData.tenthMarkScore} onChange={handleChange} />
+                  <Label htmlFor="tenthMarkScore" className="text-sm font-medium">10th Mark Score (out of 100)</Label>
+                  <Input id="tenthMarkScore" type="number" min="0" max="100" value={formData.tenthMarkScore} onChange={handleChange} className="mt-1" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="twelfthSchoolName">12th School Name</Label>
-                  <Input id="twelfthSchoolName" value={formData.twelfthSchoolName} onChange={handleChange} />
+                  <Label htmlFor="twelfthSchoolName" className="text-sm font-medium">12th School Name</Label>
+                  <Input id="twelfthSchoolName" value={formData.twelfthSchoolName} onChange={handleChange} className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="twelfthMarkScore">12th Mark Score (out of 100)</Label>
-                  <Input id="twelfthMarkScore" type="number" min="0" max="100" value={formData.twelfthMarkScore} onChange={handleChange} />
+                  <Label htmlFor="twelfthMarkScore" className="text-sm font-medium">12th Mark Score (out of 100)</Label>
+                  <Input id="twelfthMarkScore" type="number" min="0" max="100" value={formData.twelfthMarkScore} onChange={handleChange} className="mt-1" />
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full py-2 text-base font-semibold" disabled={loading}>
                 {loading ? 'Adding Student...' : 'Add Student'}
               </Button>
             </form>

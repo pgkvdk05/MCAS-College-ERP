@@ -107,26 +107,26 @@ const ViewMyClasses: React.FC = () => {
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">My Classes</h2>
-        <Card className="max-w-4xl mx-auto">
+        <Card className="max-w-4xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Assigned Classes</CardTitle>
-            <CardDescription>Overview of the classes and subjects you are currently teaching.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Assigned Classes</CardTitle>
+            <CardDescription className="text-muted-foreground">Overview of the classes and subjects you are currently teaching.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto border rounded-md">
+            <div className="overflow-x-auto border rounded-md shadow-sm">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Department</TableHead>
-                    <TableHead>Course Name</TableHead>
-                    <TableHead>Course Code</TableHead>
-                    <TableHead className="text-right">Credits</TableHead>
+                  <TableRow className="bg-muted/20">
+                    <TableHead className="font-semibold">Department</TableHead>
+                    <TableHead className="font-semibold">Course Name</TableHead>
+                    <TableHead className="font-semibold">Course Code</TableHead>
+                    <TableHead className="text-right font-semibold">Credits</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {teacherClasses.length > 0 ? (
                     teacherClasses.map((cls) => (
-                      <TableRow key={cls.id}>
+                      <TableRow key={cls.id} className="hover:bg-muted/50">
                         <TableCell className="font-medium">{cls.departments?.name || 'N/A'}</TableCell>
                         <TableCell>{cls.name}</TableCell>
                         <TableCell><Badge variant="secondary">{cls.code}</Badge></TableCell>
@@ -135,7 +135,7 @@ const ViewMyClasses: React.FC = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center text-muted-foreground">
+                      <TableCell colSpan={4} className="text-center text-muted-foreground py-4">
                         No classes assigned yet or no department linked to your profile.
                       </TableCell>
                     </TableRow>

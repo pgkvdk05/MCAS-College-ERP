@@ -82,35 +82,35 @@ const ApproveODRequests: React.FC = () => {
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Approve OD Requests</h2>
-        <Card className="max-w-5xl mx-auto">
+        <Card className="max-w-5xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Outstanding Duty Requests</CardTitle>
-            <CardDescription>Review and take action on student On Duty requests.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Outstanding Duty Requests</CardTitle>
+            <CardDescription className="text-muted-foreground">Review and take action on student On Duty requests.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto border rounded-md">
+            <div className="overflow-x-auto border rounded-md shadow-sm">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Student Name</TableHead>
-                    <TableHead>Roll Number</TableHead>
-                    <TableHead>Reason</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Document</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-muted/20">
+                    <TableHead className="font-semibold">Student Name</TableHead>
+                    <TableHead className="font-semibold">Roll Number</TableHead>
+                    <TableHead className="font-semibold">Reason</TableHead>
+                    <TableHead className="font-semibold">Date</TableHead>
+                    <TableHead className="font-semibold">Document</TableHead>
+                    <TableHead className="text-center font-semibold">Status</TableHead>
+                    <TableHead className="text-right font-semibold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center text-muted-foreground">
+                      <TableCell colSpan={7} className="text-center text-muted-foreground py-4">
                         Loading OD requests...
                       </TableCell>
                     </TableRow>
                   ) : requests.length > 0 ? (
                     requests.map((req) => (
-                      <TableRow key={req.id}>
+                      <TableRow key={req.id} className="hover:bg-muted/50">
                         <TableCell className="font-medium">{req.profiles?.first_name} {req.profiles?.last_name}</TableCell>
                         <TableCell>{req.profiles?.roll_number}</TableCell>
                         <TableCell>{req.reason}</TableCell>
@@ -156,7 +156,7 @@ const ApproveODRequests: React.FC = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center text-muted-foreground">
+                      <TableCell colSpan={7} className="text-center text-muted-foreground py-4">
                         No OD requests found.
                       </TableCell>
                     </TableRow>

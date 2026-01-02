@@ -155,18 +155,18 @@ const UploadMarks: React.FC = () => {
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Upload Marks</h2>
-        <Card className="max-w-3xl mx-auto">
+        <Card className="max-w-3xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Enter Student Marks</CardTitle>
-            <CardDescription>Select the class and subject, then enter marks for each student.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Enter Student Marks</CardTitle>
+            <CardDescription className="text-muted-foreground">Select the class and subject, then enter marks for each student.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-md bg-muted/50">
                 <div>
-                  <Label htmlFor="department">Department</Label>
+                  <Label htmlFor="department" className="text-sm font-medium">Department</Label>
                   <Select onValueChange={setSelectedDepartmentId} value={selectedDepartmentId} required disabled={loadingDepts}>
-                    <SelectTrigger id="department">
+                    <SelectTrigger id="department" className="mt-1">
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
@@ -183,9 +183,9 @@ const UploadMarks: React.FC = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="year">Year</Label>
+                  <Label htmlFor="year" className="text-sm font-medium">Year</Label>
                   <Select onValueChange={setSelectedYear} value={selectedYear} required>
-                    <SelectTrigger id="year">
+                    <SelectTrigger id="year" className="mt-1">
                       <SelectValue placeholder="Select Year" />
                     </SelectTrigger>
                     <SelectContent>
@@ -196,9 +196,9 @@ const UploadMarks: React.FC = () => {
                   </Select>
                 </div>
                 <div className="md:col-span-2">
-                  <Label htmlFor="course">Course</Label>
+                  <Label htmlFor="course" className="text-sm font-medium">Course</Label>
                   <Select onValueChange={setSelectedCourseId} value={selectedCourseId} required disabled={!selectedDepartmentId || loadingCourses}>
-                    <SelectTrigger id="course">
+                    <SelectTrigger id="course" className="mt-1">
                       <SelectValue placeholder={!selectedDepartmentId ? "Select Dept First" : "Select Course"} />
                     </SelectTrigger>
                     <SelectContent>
@@ -218,22 +218,22 @@ const UploadMarks: React.FC = () => {
 
               {selectedDepartmentId && selectedYear && selectedCourseId && (
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-3">Enter Marks for {courses.find(c => c.id === selectedCourseId)?.name}</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-primary">Enter Marks for {courses.find(c => c.id === selectedCourseId)?.name}</h3>
                   {loadingStudents ? (
                     <div className="text-center text-muted-foreground py-4">Loading students...</div>
                   ) : students.length > 0 ? (
-                    <div className="overflow-x-auto border rounded-md">
+                    <div className="overflow-x-auto border rounded-md shadow-sm">
                       <Table>
                         <TableHeader>
-                          <TableRow>
-                            <TableHead>Roll Number</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead className="text-center">Marks (out of 100)</TableHead>
+                          <TableRow className="bg-muted/20">
+                            <TableHead className="font-semibold">Roll Number</TableHead>
+                            <TableHead className="font-semibold">Name</TableHead>
+                            <TableHead className="text-center font-semibold">Marks (out of 100)</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {marksData.map((student) => (
-                            <TableRow key={student.student_id}>
+                            <TableRow key={student.student_id} className="hover:bg-muted/50">
                               <TableCell>{student.roll_number}</TableCell>
                               <TableCell>{student.name}</TableCell>
                               <TableCell className="text-center">
@@ -253,12 +253,14 @@ const UploadMarks: React.FC = () => {
                       </Table>
                     </div>
                   ) : (
-                    <div className="text-center text-muted-foreground py-4">No students found for the selected class.</div>
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center text-muted-foreground py-4">No students found for the selected class.</TableCell>
+                    </TableRow>
                   )}
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={submitting || marksData.length === 0}>
+              <Button type="submit" className="w-full py-2 text-base font-semibold" disabled={submitting || marksData.length === 0}>
                 {submitting ? 'Uploading Marks...' : 'Upload Marks'}
               </Button>
             </form>

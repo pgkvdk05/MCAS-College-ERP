@@ -112,15 +112,15 @@ const ManageCourses: React.FC = () => {
     <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Manage Courses</h2>
-        <Card className="max-w-5xl mx-auto">
+        <Card className="max-w-5xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Academic Courses</CardTitle>
-            <CardDescription>Add, view, and remove courses offered by the college.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Academic Courses</CardTitle>
+            <CardDescription className="text-muted-foreground">Add, view, and remove courses offered by the college.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleAddCourse} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <form onSubmit={handleAddCourse} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 border rounded-md bg-muted/50">
               <div className="md:col-span-1">
-                <Label htmlFor="newCourseName">Course Name</Label>
+                <Label htmlFor="newCourseName" className="text-sm font-medium">Course Name</Label>
                 <Input
                   id="newCourseName"
                   type="text"
@@ -129,10 +129,11 @@ const ManageCourses: React.FC = () => {
                   onChange={(e) => setNewCourseName(e.target.value)}
                   required
                   disabled={isSubmitting}
+                  className="mt-1"
                 />
               </div>
               <div className="md:col-span-1">
-                <Label htmlFor="newCourseCode">Course Code</Label>
+                <Label htmlFor="newCourseCode" className="text-sm font-medium">Course Code</Label>
                 <Input
                   id="newCourseCode"
                   type="text"
@@ -141,12 +142,13 @@ const ManageCourses: React.FC = () => {
                   onChange={(e) => setNewCourseCode(e.target.value)}
                   required
                   disabled={isSubmitting}
+                  className="mt-1"
                 />
               </div>
               <div className="md:col-span-1">
-                <Label htmlFor="newCourseDepartment">Department</Label>
+                <Label htmlFor="newCourseDepartment" className="text-sm font-medium">Department</Label>
                 <Select onValueChange={setNewCourseDepartmentId} value={newCourseDepartmentId} required>
-                  <SelectTrigger id="newCourseDepartment">
+                  <SelectTrigger id="newCourseDepartment" className="mt-1">
                     <SelectValue placeholder="Select Department" />
                   </SelectTrigger>
                   <SelectContent>
@@ -157,7 +159,7 @@ const ManageCourses: React.FC = () => {
                 </Select>
               </div>
               <div className="md:col-span-1">
-                <Label htmlFor="newCourseCredits">Credits</Label>
+                <Label htmlFor="newCourseCredits" className="text-sm font-medium">Credits</Label>
                 <Input
                   id="newCourseCredits"
                   type="number"
@@ -168,34 +170,35 @@ const ManageCourses: React.FC = () => {
                   onChange={(e) => setNewCourseCredits(e.target.value)}
                   required
                   disabled={isSubmitting}
+                  className="mt-1"
                 />
               </div>
               <div className="md:col-span-4">
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full py-2 text-base font-semibold" disabled={isSubmitting}>
                   {isSubmitting ? 'Adding...' : 'Add Course'}
                 </Button>
               </div>
             </form>
 
-            <div className="overflow-x-auto border rounded-md">
+            <div className="overflow-x-auto border rounded-md shadow-sm">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Course Name</TableHead>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Department</TableHead>
-                    <TableHead className="text-right">Credits</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-muted/20">
+                    <TableHead className="font-semibold">Course Name</TableHead>
+                    <TableHead className="font-semibold">Code</TableHead>
+                    <TableHead className="font-semibold">Department</TableHead>
+                    <TableHead className="text-right font-semibold">Credits</TableHead>
+                    <TableHead className="text-right font-semibold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loadingCourses ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">Loading courses...</TableCell>
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-4">Loading courses...</TableCell>
                     </TableRow>
                   ) : courses.length > 0 ? (
                     courses.map((course) => (
-                      <TableRow key={course.id}>
+                      <TableRow key={course.id} className="hover:bg-muted/50">
                         <TableCell className="font-medium">{course.name}</TableCell>
                         <TableCell>{course.code}</TableCell>
                         <TableCell>{course.departments?.name || 'Unknown'}</TableCell>
@@ -213,7 +216,7 @@ const ManageCourses: React.FC = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-4">
                         No courses added yet.
                       </TableCell>
                     </TableRow>

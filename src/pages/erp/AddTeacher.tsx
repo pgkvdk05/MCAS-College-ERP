@@ -103,51 +103,51 @@ const AddTeacher: React.FC = () => {
     <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Add New Teacher</h2>
-        <Card className="max-w-2xl mx-auto">
+        <Card className="max-w-2xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Teacher Details</CardTitle>
-            <CardDescription>Create a new teacher account.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Teacher Details</CardTitle>
+            <CardDescription className="text-muted-foreground">Create a new teacher account.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" value={formData.firstName} onChange={handleChange} required />
+                  <Label htmlFor="firstName" className="text-sm font-medium">First Name</Label>
+                  <Input id="firstName" value={formData.firstName} onChange={handleChange} required className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" value={formData.lastName} onChange={handleChange} required />
+                  <Label htmlFor="lastName" className="text-sm font-medium">Last Name</Label>
+                  <Input id="lastName" value={formData.lastName} onChange={handleChange} required className="mt-1" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" value={formData.email} onChange={handleChange} required />
+                  <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                  <Input id="email" type="email" value={formData.email} onChange={handleChange} required className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="username">Username (Optional)</Label>
-                  <Input id="username" value={formData.username} onChange={handleChange} placeholder="Defaults to Employee Code" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="employeeCode">Employee Code</Label>
-                  <Input id="employeeCode" value={formData.employeeCode} onChange={handleChange} required />
-                </div>
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" value={formData.password} onChange={handleChange} required />
+                  <Label htmlFor="username" className="text-sm font-medium">Username (Optional)</Label>
+                  <Input id="username" value={formData.username} onChange={handleChange} placeholder="Defaults to Employee Code" className="mt-1" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="departmentId">Department</Label>
+                  <Label htmlFor="employeeCode" className="text-sm font-medium">Employee Code</Label>
+                  <Input id="employeeCode" value={formData.employeeCode} onChange={handleChange} required className="mt-1" />
+                </div>
+                <div>
+                  <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                  <Input id="password" type="password" value={formData.password} onChange={handleChange} required className="mt-1" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="departmentId" className="text-sm font-medium">Department</Label>
                   <Select onValueChange={(value) => handleSelectChange(value, 'departmentId')} value={formData.departmentId} required>
-                    <SelectTrigger id="departmentId">
+                    <SelectTrigger id="departmentId" className="mt-1">
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
@@ -160,11 +160,11 @@ const AddTeacher: React.FC = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="designation">Designation</Label>
-                  <Input id="designation" value={formData.designation} onChange={handleChange} placeholder="e.g. Assistant Professor" />
+                  <Label htmlFor="designation" className="text-sm font-medium">Designation</Label>
+                  <Input id="designation" value={formData.designation} onChange={handleChange} placeholder="e.g. Assistant Professor" className="mt-1" />
                 </div>
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full py-2 text-base font-semibold" disabled={loading}>
                 {loading ? 'Adding...' : 'Add Teacher'}
               </Button>
             </form>

@@ -143,22 +143,22 @@ const MarkAttendance: React.FC = () => {
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Mark Attendance</h2>
-        <Card className="max-w-4xl mx-auto">
+        <Card className="max-w-4xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Mark Daily Attendance</CardTitle>
-            <CardDescription>Select the class and mark attendance for students.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Mark Daily Attendance</CardTitle>
+            <CardDescription className="text-muted-foreground">Select the class and mark attendance for students.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 border rounded-md bg-muted/50">
                 <div>
-                  <Label htmlFor="date">Date</Label>
+                  <Label htmlFor="date" className="text-sm font-medium">Date</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-full justify-start text-left font-normal",
+                          "w-full justify-start text-left font-normal mt-1",
                           !selectedDate && "text-muted-foreground"
                         )}
                       >
@@ -177,9 +177,9 @@ const MarkAttendance: React.FC = () => {
                   </Popover>
                 </div>
                 <div>
-                  <Label htmlFor="department">Department</Label>
+                  <Label htmlFor="department" className="text-sm font-medium">Department</Label>
                   <Select onValueChange={setSelectedDepartmentId} value={selectedDepartmentId} required>
-                    <SelectTrigger id="department">
+                    <SelectTrigger id="department" className="mt-1">
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
@@ -190,9 +190,9 @@ const MarkAttendance: React.FC = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="year">Year</Label>
+                  <Label htmlFor="year" className="text-sm font-medium">Year</Label>
                   <Select onValueChange={setSelectedYear} value={selectedYear} required>
-                    <SelectTrigger id="year">
+                    <SelectTrigger id="year" className="mt-1">
                       <SelectValue placeholder="Select Year" />
                     </SelectTrigger>
                     <SelectContent>
@@ -203,9 +203,9 @@ const MarkAttendance: React.FC = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="course">Course</Label>
+                  <Label htmlFor="course" className="text-sm font-medium">Course</Label>
                   <Select onValueChange={setSelectedCourseId} value={selectedCourseId} required disabled={!selectedDepartmentId}>
-                    <SelectTrigger id="course">
+                    <SelectTrigger id="course" className="mt-1">
                       <SelectValue placeholder={!selectedDepartmentId ? "Select Dept First" : "Select Course"} />
                     </SelectTrigger>
                     <SelectContent>
@@ -219,23 +219,23 @@ const MarkAttendance: React.FC = () => {
 
               {selectedDepartmentId && selectedYear && (
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-3">Students List</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-primary">Students List</h3>
                   {loadingStudents ? (
                     <div className="text-muted-foreground text-center py-4">Loading students...</div>
                   ) : students.length > 0 ? (
-                    <div className="overflow-x-auto border rounded-md">
+                    <div className="overflow-x-auto border rounded-md shadow-sm">
                       <Table>
                         <TableHeader>
-                          <TableRow>
-                            <TableHead>Roll Number</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead className="text-center">Present</TableHead>
-                            <TableHead>Reason (if absent)</TableHead>
+                          <TableRow className="bg-muted/20">
+                            <TableHead className="font-semibold">Roll Number</TableHead>
+                            <TableHead className="font-semibold">Name</TableHead>
+                            <TableHead className="text-center font-semibold">Present</TableHead>
+                            <TableHead className="font-semibold">Reason (if absent)</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {students.map((student) => (
-                            <TableRow key={student.id}>
+                            <TableRow key={student.id} className="hover:bg-muted/50">
                               <TableCell>{student.roll_number}</TableCell>
                               <TableCell>{student.first_name} {student.last_name}</TableCell>
                               <TableCell className="text-center">
@@ -266,7 +266,7 @@ const MarkAttendance: React.FC = () => {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={submitting || students.length === 0}>
+              <Button type="submit" className="w-full py-2 text-base font-semibold" disabled={submitting || students.length === 0}>
                 {submitting ? 'Submitting...' : 'Submit Attendance'}
               </Button>
             </form>

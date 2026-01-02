@@ -49,16 +49,16 @@ const StudentChat: React.FC = () => {
     <MainLayout userRole={userRole}>
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Class Chat</h2>
-        <Card className="max-w-3xl mx-auto h-[600px] flex flex-col">
-          <CardHeader>
-            <CardTitle>General Class Discussion</CardTitle>
-            <CardDescription>Communicate with your teachers and classmates.</CardDescription>
+        <Card className="max-w-3xl mx-auto h-[600px] flex flex-col shadow-lg rounded-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-2xl font-semibold">General Class Discussion</CardTitle>
+            <CardDescription className="text-muted-foreground">Communicate with your teachers and classmates.</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow flex flex-col p-4 pt-0">
-            <div className="mb-4">
-              <Label htmlFor="course-select">Select Course</Label>
+            <div className="mb-4 p-3 border rounded-md bg-muted/50">
+              <Label htmlFor="course-select" className="text-sm font-medium">Select Course</Label>
               <Select onValueChange={setSelectedCourseId} value={selectedCourseId || ''} disabled={loadingCourses}>
-                <SelectTrigger id="course-select">
+                <SelectTrigger id="course-select" className="mt-1">
                   <SelectValue placeholder="Select a Course to chat in" />
                 </SelectTrigger>
                 <SelectContent>
@@ -75,12 +75,12 @@ const StudentChat: React.FC = () => {
               </Select>
             </div>
 
-            <ScrollArea className="flex-grow pr-4 mb-4">
+            <ScrollArea className="flex-grow pr-4 mb-4 border rounded-md p-4 bg-background shadow-inner">
               <div className="space-y-4">
                 {loadingMessages ? (
-                  <div className="text-center text-muted-foreground">Loading messages...</div>
+                  <div className="text-center text-muted-foreground py-4">Loading messages...</div>
                 ) : messages.length === 0 ? (
-                  <div className="text-center text-muted-foreground">No messages yet. Start the conversation!</div>
+                  <div className="text-center text-muted-foreground py-4">No messages yet. Start the conversation!</div>
                 ) : (
                   messages.map((msg) => (
                     <div
@@ -90,26 +90,26 @@ const StudentChat: React.FC = () => {
                       }`}
                     >
                       {msg.sender_id !== user?.id && (
-                        <Avatar className="h-8 w-8">
+                        <Avatar className="h-8 w-8 flex-shrink-0">
                           <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${getSenderName(msg)}`} />
                           <AvatarFallback>{getSenderName(msg).substring(0, 2)}</AvatarFallback>
                         </Avatar>
                       )}
                       <div
-                        className={`flex flex-col max-w-[70%] p-3 rounded-lg ${
+                        className={`flex flex-col max-w-[70%] p-3 rounded-lg shadow-sm ${
                           msg.sender_id === user?.id
                             ? 'bg-primary text-primary-foreground rounded-br-none'
                             : 'bg-muted rounded-bl-none'
                         }`}
                       >
                         <div className="font-semibold text-sm">{getSenderName(msg)}</div>
-                        <p className="text-sm">{msg.message_text}</p>
+                        <p className="text-sm break-words">{msg.message_text}</p>
                         <span className="text-xs text-muted-foreground self-end mt-1">
                           {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                       {msg.sender_id === user?.id && (
-                        <Avatar className="h-8 w-8">
+                        <Avatar className="h-8 w-8 flex-shrink-0">
                           <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${getSenderName(msg)}`} />
                           <AvatarFallback>{getSenderName(msg).substring(0, 2)}</AvatarFallback>
                         </Avatar>
@@ -125,7 +125,7 @@ const StudentChat: React.FC = () => {
                 placeholder="Type your message..."
                 value={newMessageText}
                 onChange={(e) => setNewMessageText(e.target.value)}
-                className="flex-grow"
+                className="flex-grow h-10"
                 disabled={!selectedCourseId || sending}
               />
               <Button type="submit" size="icon" disabled={!selectedCourseId || sending}>

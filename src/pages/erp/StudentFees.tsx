@@ -76,32 +76,32 @@ const StudentFees: React.FC = () => {
     <MainLayout userRole="STUDENT">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">My Fees</h2>
-        <Card className="max-w-4xl mx-auto">
+        <Card className="max-w-4xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Fee Status</CardTitle>
-            <CardDescription>Overview of your academic fees and payment status.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Fee Status</CardTitle>
+            <CardDescription className="text-muted-foreground">Overview of your academic fees and payment status.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="mb-6 p-4 border rounded-md bg-muted/50 flex justify-between items-center">
-              <p className="text-lg font-semibold">Total Outstanding Amount:</p>
-              <p className="text-2xl font-bold text-destructive">₹{totalOutstanding.toLocaleString()}</p>
+            <div className="mb-6 p-4 border rounded-md bg-muted/50 flex flex-col sm:flex-row justify-between items-center shadow-sm">
+              <p className="text-lg font-semibold text-primary mb-2 sm:mb-0">Total Outstanding Amount:</p>
+              <p className="text-3xl font-bold text-destructive">₹{totalOutstanding.toLocaleString()}</p>
             </div>
 
-            <div className="overflow-x-auto border rounded-md">
+            <div className="overflow-x-auto border rounded-md shadow-sm">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Fee Type</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-muted/20">
+                    <TableHead className="font-semibold">Fee Type</TableHead>
+                    <TableHead className="text-right font-semibold">Amount</TableHead>
+                    <TableHead className="font-semibold">Due Date</TableHead>
+                    <TableHead className="text-center font-semibold">Status</TableHead>
+                    <TableHead className="text-right font-semibold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {studentFees.length > 0 ? (
                     studentFees.map((fee) => (
-                      <TableRow key={fee.id}>
+                      <TableRow key={fee.id} className="hover:bg-muted/50">
                         <TableCell className="font-medium">{fee.fee_type}</TableCell>
                         <TableCell className="text-right">₹{fee.amount.toLocaleString()}</TableCell>
                         <TableCell>{fee.due_date}</TableCell>
@@ -121,7 +121,7 @@ const StudentFees: React.FC = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-4">
                         No fee records found.
                       </TableCell>
                     </TableRow>

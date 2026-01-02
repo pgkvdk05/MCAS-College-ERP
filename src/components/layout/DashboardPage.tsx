@@ -179,10 +179,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userRole: propUserRole })
         <h2 className="text-4xl font-bold text-primary mb-6">{config.title}</h2>
 
         {config.sections.map((section, index) => (
-          <Card key={index}>
+          <Card key={index} className="shadow-lg rounded-lg">
             <CardHeader>
-              <CardTitle>{section.title}</CardTitle>
-              {section.description && <CardDescription>{section.description}</CardDescription>}
+              <CardTitle className="text-2xl font-semibold">{section.title}</CardTitle>
+              {section.description && <CardDescription className="text-muted-foreground">{section.description}</CardDescription>}
             </CardHeader>
             <CardContent>
               {section.type === 'stats' && (
@@ -191,7 +191,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userRole: propUserRole })
                     const Icon = item.icon;
                     return (
                       <Link to={item.href || '#'} key={itemIndex} className="block">
-                        <Card className="hover:border-primary hover:shadow-md transition-all cursor-pointer">
+                        <Card className="hover:border-primary hover:shadow-xl transition-all duration-200 cursor-pointer h-full">
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
                             {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
@@ -211,9 +211,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userRole: propUserRole })
                   {section.items.map((item, itemIndex) => {
                     const Icon = item.icon;
                     return (
-                      <Button key={itemIndex} asChild variant={item.variant || 'default'}>
+                      <Button key={itemIndex} asChild variant={item.variant || 'default'} className="h-12 text-base font-semibold">
                         <Link to={item.href} className="flex items-center justify-center space-x-2">
-                          {Icon && <Icon className="h-4 w-4" />}
+                          {Icon && <Icon className="h-5 w-5" />}
                           <span>{item.name}</span>
                         </Link>
                       </Button>

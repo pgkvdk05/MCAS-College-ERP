@@ -140,39 +140,39 @@ const EditUser: React.FC = () => {
     <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Edit User: {formData.first_name} {formData.last_name}</h2>
-        <Card className="max-w-3xl mx-auto">
+        <Card className="max-w-3xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>User Details</CardTitle>
-            <CardDescription>Update the profile information for this user.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">User Details</CardTitle>
+            <CardDescription className="text-muted-foreground">Update the profile information for this user.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="first_name">First Name</Label>
-                  <Input id="first_name" value={formData.first_name || ''} onChange={handleChange} required />
+                  <Label htmlFor="first_name" className="text-sm font-medium">First Name</Label>
+                  <Input id="first_name" value={formData.first_name || ''} onChange={handleChange} required className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="last_name">Last Name</Label>
-                  <Input id="last_name" value={formData.last_name || ''} onChange={handleChange} required />
+                  <Label htmlFor="last_name" className="text-sm font-medium">Last Name</Label>
+                  <Input id="last_name" value={formData.last_name || ''} onChange={handleChange} required className="mt-1" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" value={formData.email || ''} onChange={handleChange} required />
+                  <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                  <Input id="email" type="email" value={formData.email || ''} onChange={handleChange} required className="mt-1" />
                 </div>
                 <div>
-                  <Label htmlFor="username">Username</Label>
-                  <Input id="username" value={formData.username || ''} onChange={handleChange} />
+                  <Label htmlFor="username" className="text-sm font-medium">Username</Label>
+                  <Input id="username" value={formData.username || ''} onChange={handleChange} className="mt-1" />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="role">Role</Label>
+                <Label htmlFor="role" className="text-sm font-medium">Role</Label>
                 <Select onValueChange={(value) => handleSelectChange(value as UserProfile['role'], 'role')} value={formData.role || ''} required>
-                  <SelectTrigger id="role">
+                  <SelectTrigger id="role" className="mt-1">
                     <SelectValue placeholder="Select Role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -188,12 +188,12 @@ const EditUser: React.FC = () => {
               {(formData.role === 'TEACHER' || formData.role === 'ADMIN' || formData.role === 'SUPER_ADMIN') && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="employee_id">Employee ID</Label>
-                    <Input id="employee_id" value={formData.employee_id || ''} onChange={handleChange} />
+                    <Label htmlFor="employee_id" className="text-sm font-medium">Employee ID</Label>
+                    <Input id="employee_id" value={formData.employee_id || ''} onChange={handleChange} className="mt-1" />
                   </div>
                   <div>
-                    <Label htmlFor="designation">Designation</Label>
-                    <Input id="designation" value={formData.designation || ''} onChange={handleChange} />
+                    <Label htmlFor="designation" className="text-sm font-medium">Designation</Label>
+                    <Input id="designation" value={formData.designation || ''} onChange={handleChange} className="mt-1" />
                   </div>
                 </div>
               )}
@@ -201,13 +201,13 @@ const EditUser: React.FC = () => {
               {formData.role === 'STUDENT' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="roll_number">Roll Number</Label>
-                    <Input id="roll_number" value={formData.roll_number || ''} onChange={handleChange} />
+                    <Label htmlFor="roll_number" className="text-sm font-medium">Roll Number</Label>
+                    <Input id="roll_number" value={formData.roll_number || ''} onChange={handleChange} className="mt-1" />
                   </div>
                   <div>
-                    <Label htmlFor="year">Year</Label>
+                    <Label htmlFor="year" className="text-sm font-medium">Year</Label>
                     <Select onValueChange={(value) => handleSelectChange(value, 'year')} value={formData.year || ''}>
-                      <SelectTrigger id="year">
+                      <SelectTrigger id="year" className="mt-1">
                         <SelectValue placeholder="Select Year" />
                       </SelectTrigger>
                       <SelectContent>
@@ -222,9 +222,9 @@ const EditUser: React.FC = () => {
 
               {(formData.role === 'TEACHER' || formData.role === 'STUDENT') && (
                 <div>
-                  <Label htmlFor="department_id">Department</Label>
+                  <Label htmlFor="department_id" className="text-sm font-medium">Department</Label>
                   <Select onValueChange={(value) => handleSelectChange(value, 'department_id')} value={formData.department_id || ''}>
-                    <SelectTrigger id="department_id">
+                    <SelectTrigger id="department_id" className="mt-1">
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
@@ -246,36 +246,36 @@ const EditUser: React.FC = () => {
               {formData.role === 'STUDENT' && (
                 <>
                   <div>
-                    <Label htmlFor="address">Address</Label>
-                    <Textarea id="address" placeholder="Enter student's full address" value={formData.address || ''} onChange={handleChange} />
+                    <Label htmlFor="address" className="text-sm font-medium">Address</Label>
+                    <Textarea id="address" placeholder="Enter student's full address" value={formData.address || ''} onChange={handleChange} className="mt-1" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="tenth_school_name">10th School Name</Label>
-                      <Input id="tenth_school_name" value={formData.tenth_school_name || ''} onChange={handleChange} />
+                      <Label htmlFor="tenth_school_name" className="text-sm font-medium">10th School Name</Label>
+                      <Input id="tenth_school_name" value={formData.tenth_school_name || ''} onChange={handleChange} className="mt-1" />
                     </div>
                     <div>
-                      <Label htmlFor="tenth_mark_score">10th Mark Score (out of 100)</Label>
-                      <Input id="tenth_mark_score" type="number" min="0" max="100" value={formData.tenth_mark_score || ''} onChange={handleChange} />
+                      <Label htmlFor="tenth_mark_score" className="text-sm font-medium">10th Mark Score (out of 100)</Label>
+                      <Input id="tenth_mark_score" type="number" min="0" max="100" value={formData.tenth_mark_score || ''} onChange={handleChange} className="mt-1" />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="twelfth_school_name">12th School Name</Label>
-                      <Input id="twelfth_school_name" value={formData.twelfth_school_name || ''} onChange={handleChange} />
+                      <Label htmlFor="twelfth_school_name" className="text-sm font-medium">12th School Name</Label>
+                      <Input id="twelfth_school_name" value={formData.twelfth_school_name || ''} onChange={handleChange} className="mt-1" />
                     </div>
                     <div>
-                      <Label htmlFor="twelfth_mark_score">12th Mark Score (out of 100)</Label>
-                      <Input id="twelfth_mark_score" type="number" min="0" max="100" value={formData.twelfth_mark_score || ''} onChange={handleChange} />
+                      <Label htmlFor="twelfth_mark_score" className="text-sm font-medium">12th Mark Score (out of 100)</Label>
+                      <Input id="twelfth_mark_score" type="number" min="0" max="100" value={formData.twelfth_mark_score || ''} onChange={handleChange} className="mt-1" />
                     </div>
                   </div>
                 </>
               )}
 
-              <Button type="submit" className="w-full" disabled={submitting}>
+              <Button type="submit" className="w-full py-2 text-base font-semibold" disabled={submitting}>
                 {submitting ? 'Updating...' : 'Update Profile'}
               </Button>
-              <Button type="button" variant="outline" className="w-full" onClick={() => navigate('/erp/manage-users')} disabled={submitting}>
+              <Button type="button" variant="outline" className="w-full py-2 text-base font-semibold" onClick={() => navigate('/erp/manage-users')} disabled={submitting}>
                 Cancel
               </Button>
             </form>

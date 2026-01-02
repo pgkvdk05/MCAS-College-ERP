@@ -6,7 +6,7 @@ import Sidebar from './Sidebar';
 import { useSession } from '@/components/auth/SessionContextProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils'; // Import cn for conditional class names
+import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -38,17 +38,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="bg-primary text-primary-foreground p-4 flex justify-between items-center shadow-md">
+      <header className="bg-primary text-primary-foreground p-4 flex justify-between items-center shadow-lg">
         <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
           <img src="/collogo.png" alt="College Logo" className="h-8" />
-          <div className="font-bold text-lg">Mangalam College of Arts and Science</div>
+          <div className="font-bold text-lg md:text-xl">Mangalam College of Arts and Science</div>
         </Link>
         <nav className="flex items-center space-x-4">
           {userRole && (
-            <span className="text-sm">Role: {userRole.replace('_', ' ')}</span>
+            <span className="text-sm md:text-base">Role: {userRole.replace('_', ' ')}</span>
           )}
           {user && (
-            <Button variant="ghost" onClick={handleLogout} className="text-sm hover:underline text-primary-foreground">
+            <Button variant="ghost" onClick={handleLogout} className="text-sm md:text-base hover:underline text-primary-foreground">
               Logout
             </Button>
           )}
@@ -65,11 +65,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         )}
         <main
           className={cn(
-            "flex-grow container mx-auto p-6 transition-all duration-300",
-            showSidebar && isSidebarCollapsed ? "ml-sidebar-collapsed" : "ml-sidebar-expanded"
+            "flex-grow p-6 transition-all duration-300",
+            showSidebar && isSidebarCollapsed ? "md:ml-sidebar-collapsed" : "md:ml-sidebar-expanded"
           )}
         >
-          {children}
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
 

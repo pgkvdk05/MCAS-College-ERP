@@ -92,15 +92,15 @@ const ManageDepartments: React.FC = () => {
     <MainLayout userRole="SUPER_ADMIN">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">Manage Departments</h2>
-        <Card className="max-w-4xl mx-auto">
+        <Card className="max-w-4xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>College Departments</CardTitle>
-            <CardDescription>Add, view, and remove academic departments.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">College Departments</CardTitle>
+            <CardDescription className="text-muted-foreground">Add, view, and remove academic departments.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleAddDepartment} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <form onSubmit={handleAddDepartment} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 border rounded-md bg-muted/50">
               <div className="md:col-span-1">
-                <Label htmlFor="newDepartmentName">Department Name</Label>
+                <Label htmlFor="newDepartmentName" className="text-sm font-medium">Department Name</Label>
                 <Input
                   id="newDepartmentName"
                   type="text"
@@ -109,10 +109,11 @@ const ManageDepartments: React.FC = () => {
                   onChange={(e) => setNewDepartmentName(e.target.value)}
                   required
                   disabled={isSubmitting}
+                  className="mt-1"
                 />
               </div>
               <div className="md:col-span-1">
-                <Label htmlFor="newDepartmentCode">Department Code</Label>
+                <Label htmlFor="newDepartmentCode" className="text-sm font-medium">Department Code</Label>
                 <Input
                   id="newDepartmentCode"
                   type="text"
@@ -121,34 +122,35 @@ const ManageDepartments: React.FC = () => {
                   onChange={(e) => setNewDepartmentCode(e.target.value)}
                   required
                   disabled={isSubmitting}
+                  className="mt-1"
                 />
               </div>
               <div className="md:col-span-1 flex items-end">
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full py-2 text-base font-semibold" disabled={isSubmitting}>
                   {isSubmitting ? 'Adding...' : 'Add Department'}
                 </Button>
               </div>
             </form>
 
-            <div className="overflow-x-auto border rounded-md">
+            <div className="overflow-x-auto border rounded-md shadow-sm">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Department Name</TableHead>
-                    <TableHead>Code</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-muted/20">
+                    <TableHead className="font-semibold">Department Name</TableHead>
+                    <TableHead className="font-semibold">Code</TableHead>
+                    <TableHead className="text-right font-semibold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center text-muted-foreground">
+                      <TableCell colSpan={3} className="text-center text-muted-foreground py-4">
                         Loading departments...
                       </TableCell>
                     </TableRow>
                   ) : departments.length > 0 ? (
                     departments.map((dept) => (
-                      <TableRow key={dept.id}>
+                      <TableRow key={dept.id} className="hover:bg-muted/50">
                         <TableCell className="font-medium">{dept.name}</TableCell>
                         <TableCell>{dept.code}</TableCell>
                         <TableCell className="text-right">
@@ -164,7 +166,7 @@ const ManageDepartments: React.FC = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center text-muted-foreground">
+                      <TableCell colSpan={3} className="text-center text-muted-foreground py-4">
                         No departments added yet.
                       </TableCell>
                     </TableRow>

@@ -88,17 +88,17 @@ const ViewStudentProfiles: React.FC = () => {
     <MainLayout userRole="TEACHER">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-primary">View Student Profiles</h2>
-        <Card className="max-w-6xl mx-auto">
+        <Card className="max-w-6xl mx-auto shadow-lg rounded-lg">
           <CardHeader>
-            <CardTitle>Student Directory</CardTitle>
-            <CardDescription>Browse student profiles by class.</CardDescription>
+            <CardTitle className="text-2xl font-semibold">Student Directory</CardTitle>
+            <CardDescription className="text-muted-foreground">Browse student profiles by class.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 border rounded-md bg-muted/50">
               <div>
-                <Label htmlFor="filterDepartment">Department</Label>
+                <Label htmlFor="filterDepartment" className="text-sm font-medium">Department</Label>
                 <Select onValueChange={setFilterDepartment} value={filterDepartment} disabled={loadingDepts}>
-                  <SelectTrigger id="filterDepartment">
+                  <SelectTrigger id="filterDepartment" className="mt-1">
                     <SelectValue placeholder="All Departments" />
                   </SelectTrigger>
                   <SelectContent>
@@ -116,9 +116,9 @@ const ViewStudentProfiles: React.FC = () => {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="filterYear">Year</Label>
+                <Label htmlFor="filterYear" className="text-sm font-medium">Year</Label>
                 <Select onValueChange={setFilterYear} value={filterYear}>
-                  <SelectTrigger id="filterYear">
+                  <SelectTrigger id="filterYear" className="mt-1">
                     <SelectValue placeholder="All Years" />
                   </SelectTrigger>
                   <SelectContent>
@@ -131,27 +131,27 @@ const ViewStudentProfiles: React.FC = () => {
               </div>
             </div>
 
-            <div className="overflow-x-auto border rounded-md">
+            <div className="overflow-x-auto border rounded-md shadow-sm">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Roll Number</TableHead>
-                    <TableHead>Class</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-muted/20">
+                    <TableHead className="font-semibold">Name</TableHead>
+                    <TableHead className="font-semibold">Roll Number</TableHead>
+                    <TableHead className="font-semibold">Class</TableHead>
+                    <TableHead className="font-semibold">Email</TableHead>
+                    <TableHead className="text-right font-semibold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loadingProfiles ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-4">
                         Loading student profiles...
                       </TableCell>
                     </TableRow>
                   ) : studentProfiles.length > 0 ? (
                     studentProfiles.map((student) => (
-                      <TableRow key={student.id}>
+                      <TableRow key={student.id} className="hover:bg-muted/50">
                         <TableCell className="font-medium">{student.first_name} {student.last_name}</TableCell>
                         <TableCell>{student.roll_number}</TableCell>
                         <TableCell>{student.departments?.name || 'N/A'} {student.year}</TableCell>
@@ -165,7 +165,7 @@ const ViewStudentProfiles: React.FC = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-4">
                         No students found for the selected filters.
                       </TableCell>
                     </TableRow>
